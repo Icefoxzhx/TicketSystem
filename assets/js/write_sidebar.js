@@ -9,8 +9,10 @@ sidebarele[0].innerHTML = '\
         	<li><a href="index.html"><i class="ti-home"></i> 概况 </a></li>\
         	<li><a class="sidebar-sub-toggle"><i class="ti-bar-chart-alt"></i> 车次操作 <span class="sidebar-collapse-icon ti-angle-down"></span></a>\
         	<ul>\
-        		<li><a href="trainman.html"> 添加车次 </a></li>\
-                <li><a href="trainman.html"> 查询车次 </a></li>\
+        		<li><a href="trainadd.html"> 添加车次 </a></li>\
+                <li><a href="traininquire.html"> 查询车次 </a></li>\
+                <li><a href="trainrelease.html"> 发布车次 </a></li>\
+                <li><a href="traindelete.html"> 删除车次 </a></li>\
         	</ul>\
         </li>\
         <li><a class="sidebar-sub-toggle"><i class="ti-layout"></i> 用户管理 <span class="sidebar-collapse-icon ti-angle-down"></span></a>\
