@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>设备转交 -QBPC</title>
+
+    <!-- ================= Favicon ================== -->
+    <!-- Standard -->
+    <link rel="shortcut icon" href="http://placehold.it/64.png/000/fff">
+    <!-- Retina iPad Touch Icon-->
+    <link rel="apple-touch-icon" sizes="144x144" href="http://placehold.it/144.png/000/fff">
+    <!-- Retina iPhone Touch Icon-->
+    <link rel="apple-touch-icon" sizes="114x114" href="http://placehold.it/114.png/000/fff">
+    <!-- Standard iPad Touch Icon-->
+    <link rel="apple-touch-icon" sizes="72x72" href="http://placehold.it/72.png/000/fff">
+    <!-- Standard iPhone Touch Icon-->
+    <link rel="apple-touch-icon" sizes="57x57" href="http://placehold.it/57.png/000/fff">
+
+    <!-- Styles -->
+    <link href="assets/css/lib/font-awesome.min.css" rel="stylesheet">
+    <link href="assets/css/lib/themify-icons.css" rel="stylesheet">
+    <link href="assets/css/lib/data-table/buttons.bootstrap.min.css" rel="stylesheet" />
+    <link href="assets/css/lib/menubar/sidebar.css" rel="stylesheet">
+    <link href="assets/css/lib/bootstrap.min.css" rel="stylesheet">
+    <link href="assets/css/lib/helper.css" rel="stylesheet">
+    <link href="assets/css/style.css" rel="stylesheet">
+</head>
+
+<body>
+
+       <div class="sidebar sidebar-hide-to-small sidebar-shrink sidebar-gestures">
+        </div>
+        <!-- /# sidebar -->
+
+
+    <div class="header">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="float-left">
+                        <div class="hamburger sidebar-toggle">
+                            <span class="line"></span>
+                            <span class="line"></span>
+                            <span class="line"></span>
+                        </div>
+                    </div>
+                    <div class="float-right">
+                        <div class="dropdown dib">
+                            <div class="header-icon" data-toggle="dropdown">
+                                <span class="user-avatar" id="user-avatar">欢迎您
+                                    <i class="ti-angle-down f-s-10"></i>
+                                </span>
+                                <div class="drop-down dropdown-profile dropdown-menu dropdown-menu-right">
+                                    <div class="dropdown-content-body">
+                                        <ul>
+                                            <li>
+                                                <a href="app-profilehtml">
+                                                    <i class="ti-user"></i>
+                                                    <span>个人资料</span>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="#">
+                                                    <i class="ti-power-off"></i>
+                                                    <span>注销</span>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <div class="content-wrap">
+        <div class="main">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-8 p-r-0 title-margin-right">
+                        <div class="page-header">
+                            <div class="page-title">
+                                <h1>设备转交</h1>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /# column -->
+                    <div class="col-lg-4 p-l-0 title-margin-left">
+                        <div class="page-header">
+                            <div class="page-title">
+                                <ol class="breadcrumb">
+                                    <li class="breadcrumb-item"><a href="index1.html">Dashboard</a></li>
+                                    <li class="breadcrumb-item active">设备转交</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /# column -->
+                </div>
+                <!-- /# row -->
+                <section id="main-content">
+                    <div class="row">
+                        <div class="col-lg-12">
+                        	<div class="card">
+	                        	<span>首先，请您选择一台电脑：&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<a id="show_add" href="#card_add" style="color: blue">不选择，手动添加</a></span>
+	                            <form class="form-inline" id="transdeal_deviceprop_inquire" name="transdeal_deviceprop_inquire" action="deviceprop1.php" method="post">
+	                                <div class="form-group input-group-rounded">
+	                                    按何种方式查询：
+	                                        <select class="form-control col-sm-20" id="method" 
+	                                         name="method" onchange="listener_method()">
+	                                            <option value="owner" selected>所有人用户名</option>
+	                                            <option value="usr">使用人用户名</option>
+	                                            <option value="brand">品牌</option>
+	                                            <option value="id">电脑编号</option>
+	                                            <option value="date">购买日期</option>
+	                                            <option value="sn">sn</option>
+	                                        </select>
+	                                </div>
+	                                <div class="input-group input-group-rounded">
+	                                    <input type="text" class="form-control input-flat col-sm-20" placeholder="请输入查询关键字" name="usr_input" size="15">
+	                                    <input class="btn btn-primary btn-group-right" type="submit" value="开始查询">
+	                                </div>
+	                                &nbsp&nbsp&nbsp&nbsp
+	                                <div id="ck_model">
+	                                    <input type="checkbox" name="ck_model" id="ck_model" onchange="listener_model()" class="form-control input-rounded">同时输入型号来查询
+	                                </div>
+	                                &nbsp&nbsp&nbsp&nbsp
+	                                <div id="input_model">
+	                                    <input type="text" class="form-control input-rounded" placeholder="请输入型号" name="input_model" size="15">
+	                                </div>
+	                            </form>
+	                            <div id="transdeal_deviceprop_total"></div>
+	                            <div class="card">
+	                                <div class="bootstrap-data-table-panel">
+	                                    <div class="table-responsive">
+	                                        <table class="table table-striped table-bordered table-hover" id="transdeal_deviceprop_table">
+	                                            <thead>
+	                                                <tr>
+	                                                    <th> </th>
+	                                                    <th>电脑流水号</th>
+	                                                    <th>所有人</th>
+	                                                    <th>使用人</th>
+	                                                    <th>购买日期</th>
+	                                                    <th>出借日期</th>
+	                                                    <th>sn</th>
+	                                                    <th>品牌</th>
+	                                                    <th>型号</th>
+	                                                    <th>点击查看详情</th>
+	                                                    <th>选择</th>
+	                                                </tr>
+	                                            </thead>
+	                                        </table>
+	                                    </div>
+	                                </div>
+	                            </div>
+	                        </div>
+	                        <div class="card" id="card_add">
+                                <form role="form" name="transdeal_add" id="transdeal_add" action="deviceprop1.php" method="post">
+                                	电脑编号(必填)：<input class="form-control input-rounded" type="text" name="tg_id" id="tg_id" required="required">
+                                    转交...(必选)
+                                    <select class="form-control input-rounded" name="prop_type">
+                                        <option value="1">仅所有权</option>
+                                        <option value="2">仅使用权</option>
+                                        <option value="3">将使用权同所有权一起转交</option>
+                                    </select>
+                                    移交后 姓名(必填)：<input class="form-control input-rounded" type="text" name="to" required="required">
+                                    移交日期(必填)：<input class="form-control input-rounded" type="text" name="date" required="required" placeholder="八位数字，如20190101">
+                                    描述：<input class="form-control input-rounded" type="text" name="describe">
+                                    <button type="submit" class="btn btn-default">确认添加</button>
+                                    <button type="reset" class="btn btn-default">清空</button>
+                                </form>
+                            </div>
+                        </div>
+                        <!-- /# column -->
+                    </div>
+                    <!-- /# row -->
+
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="footer">
+                                <p>2019 © QBPC</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+
+    
+    <!-- jquery vendor -->
+    <script src="assets/js/lib/jquery.min.js"></script>
+    <script src="assets/js/lib/jquery.form.js"></script>
+    <script src="assets/js/lib/jquery.nanoscroller.min.js"></script>
+    <!-- nano scroller -->
+    <script src="assets/js/lib/menubar/sidebar.js"></script>
+    <script src="assets/js/lib/preloader/pace.min.js"></script>
+    <!-- sidebar -->
+    
+    <!-- bootstrap -->
+
+    <script src="assets/js/lib/bootstrap.min.js"></script><script src="assets/js/scripts.js"></script>
+    <!-- scripit init
+    <script src="assets/js/lib/data-table/datatables.min.js"></script>
+    <script src="assets/js/lib/data-table/buttons.dataTables.min.js"></script>
+    <script src="assets/js/lib/data-table/dataTables.buttons.min.js"></script>
+    <script src="assets/js/lib/data-table/buttons.flash.min.js"></script>
+    <script src="assets/js/lib/data-table/jszip.min.js"></script>
+    <script src="assets/js/lib/data-table/pdfmake.min.js"></script>
+    <script src="assets/js/lib/data-table/vfs_fonts.js"></script>
+    <script src="assets/js/lib/data-table/buttons.html5.min.js"></script>
+    <script src="assets/js/lib/data-table/buttons.print.min.js"></script>
+    <script src="assets/js/lib/data-table/datatables-init.js"></script>   -->
+    <script src="assets/js/transdeal.js"></script>
+    <script src="assets/js/write_sidebar1.js"></script>
+
+
+
+
+
+
+
+</body>
+
+</html>

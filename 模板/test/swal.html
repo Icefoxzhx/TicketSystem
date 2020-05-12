@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<script src="sweetalert.min.js"></script>
+<script>
+	window.alert = function(str)
+	{
+		swal(str);
+	};
+	function a()
+	{
+		alert("Hello World");
+	}
+</script>
+</head>
+<body>
+<button onclick="a()">click</button>
+</body>
+</html>
