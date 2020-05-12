@@ -19,19 +19,19 @@ git教程：https://www.liaoxuefeng.com/wiki/896043488029600
 说明：bp_tree里面的基本信息默认只有在modify_profile的时候会变化，而列车/车站的基本信息默认不变（看到会变的话和我说一下啊）
 
 ### bptree_user
-key:<username>
+key:(username)
 存储
 1.基本信息：username, password, name, mail, privilege
 2.购票信息：用数组（？）按照购票时间顺序存储，可能会修改购票的状态
 
 ### bptree_station
-key:<station_id, train_id>
+key:(station_id, train_id)
 存储
 1.基本信息：start_stop_time, end_stop_time, price(???), sale_date
 2.维护信息：left_ticket, 候补（？）
 
 ### bptree_train
-key:<train_id>
+key:(train_id)
 存储
 1.基本信息：station_number, station_id, seat_number, start_time, travel_time, stopover_time, sale_date, type
 
