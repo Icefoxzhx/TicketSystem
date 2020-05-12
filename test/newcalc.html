@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>newcalc</title>
+	<meta charset="utf-8">
+	<script src="assets/js/lib/jquery.min.js"></script>
+    <script src="assets/js/lib/jquery.form.js"></script>
+    <script src="assets/js/lib/bootstrap.min.js"></script>
+    <script src="assets/js/lib/sweetalert/sweetalert.min.js"></script>
+   	<script src="assets/js/newcalc.js"></script>
+</head>
+<body>
+<div class="card">
+    <form role="form" name="newcalc" id="newcalc" action="newcalc.php" method="post">
+        输入一个单词:<input type="text" name="num1" id="num1" required="required">
+        <button type="submit" class="btn btn-default">确认添加</button>
+        <button type="reset" class="btn btn-default">清空</button>
+    </form>
+    <p>服务器已经接收到的字符数共计：<h3 id="count">unknown</h3></p>
+</div>
+</body>
+</html>
