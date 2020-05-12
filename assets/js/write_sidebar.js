@@ -7,9 +7,10 @@ sidebarele[0].innerHTML = '\
         </div>\
         <ul>\
         	<li><a href="index.html"><i class="ti-home"></i> 概况 </a></li>\
-        	<li><a class="sidebar-sub-toggle"><i class="ti-bar-chart-alt"></i> 操作 <span class="sidebar-collapse-icon ti-angle-down"></span></a>\
+        	<li><a class="sidebar-sub-toggle"><i class="ti-bar-chart-alt"></i> 车次操作 <span class="sidebar-collapse-icon ti-angle-down"></span></a>\
         	<ul>\
-        		<li><a href="deviceprop1.html"> 电脑资产查询 </a></li>\
+        		<li><a href="trainman.html"> 添加车次 </a></li>\
+                <li><a href="trainman.html"> 查询车次 </a></li>\
         	</ul>\
         </li>\
         <li><a class="sidebar-sub-toggle"><i class="ti-layout"></i> 用户管理 <span class="sidebar-collapse-icon ti-angle-down"></span></a>\
