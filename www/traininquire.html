@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>查询车次 -12360火车票管理系统</title>
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="favicon.ico">
+    <link rel="apple-touch-icon" sizes="144x144" href="favicon.ico">
+    <!-- Styles -->
+    <link href="assets/css/lib/font-awesome.min.css" rel="stylesheet">
+    <link href="assets/css/lib/themify-icons.css" rel="stylesheet">
+    <link href="assets/css/lib/data-table/buttons.bootstrap.min.css" rel="stylesheet" />
+    <link href="assets/css/lib/menubar/sidebar.css" rel="stylesheet">
+    <link href="assets/css/lib/bootstrap.min.css" rel="stylesheet">
+    <link href="assets/css/lib/helper.css" rel="stylesheet">
+    <link href="assets/css/style.css" rel="stylesheet">
+</head>
+
+<body>
+
+       <div class="sidebar sidebar-hide-to-small sidebar-shrink sidebar-gestures">
+        </div>
+        <!-- /# sidebar -->
+
+
+    <div class="header">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12">                    <div class="float-left">
+                        <div class="hamburger sidebar-toggle">
+                            <span class="line"></span>
+                            <span class="line"></span>
+                            <span class="line"></span>
+                        </div>
+                    </div>
+                    <div class="float-right">
+                        <div class="dropdown dib">
+                            <div class="header-icon" data-toggle="dropdown">
+                            <span class="user-avatar" id="user-avatar">欢迎您
+                                    <i class="ti-angle-down f-s-10"></i>
+                                </span>
+                                <div class="drop-down dropdown-profile dropdown-menu dropdown-menu-right">
+                                    <div class="dropdown-content-body">
+                                        <ul>
+                                            <li>
+                                                <a href="app-profilehtml">
+                                                    <i class="ti-user"></i>
+                                                    <span>个人资料</span>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="logout.php">
+                                                    <i class="ti-power-off"></i>
+                                                    <span>注销</span>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <div class="content-wrap">
+        <div class="main">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-8 p-r-0 title-margin-right">
+                        <div class="page-header">
+                            <div class="page-title">
+                                <h1>查询车次</h1>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /# column -->
+                    <div class="col-lg-4 p-l-0 title-margin-left">
+                        <div class="page-header">
+                            <div class="page-title">
+                                <ol class="breadcrumb">
+                                    <li class="breadcrumb-item"><a href="index.html">主页</a></li>
+                                    <li class="breadcrumb-item active">查询车次</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /# column -->
+                </div>
+                <!-- /# row -->
+				<section id="main-content">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <form class="form-inline" id="traininquire" name="traininquire" action="traininquire.php" method="post">
+                                <div class="input-group input-group-rounded">
+                                    	<input type="text" class="form-control input-flat" placeholder="车次ID" name="traininquire_id">
+                                    	<input type="text" class="form-control input-flat" placeholder="日期" name="traininquire_date">
+                                    <input class="btn btn-primary btn-group-right" type="submit" value="开始查询">
+                                </div>
+                            </form>
+                            <div id="traininquire_total"></div>
+                            <div class="card" id="card_inquire">
+                                <div class="bootstrap-data-table-panel">
+                                    <div class="table-responsive">
+                                        <table class="table table-striped table-bordered table-hover" id="traininquire_main_table">
+                                            <thead>
+                                                <tr>
+                                                    <th> </th>
+                                                    <th>途经站名</th>
+                                                    <th>抵达本站时间</th>
+                                                    <th>离开本站时间</th>
+                                                    <th>从始发站乘坐至该站的累计票价</th>
+                                                    <th>从该站到下一站的剩余票数</th>
+                                                </tr>
+                                            </thead>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /# column -->
+                    </div>
+                    <!-- /# row -->
+
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="footer">
+                                <p>2020 © ACM Class</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+
+    
+    <!-- jquery vendor -->
+    <script src="assets/js/lib/jquery.min.js"></script>
+    <script src="assets/js/lib/jquery.form.js"></script>
+    <script src="assets/js/lib/jquery.nanoscroller.min.js"></script>
+    <!-- nano scroller -->
+    <script src="assets/js/lib/menubar/sidebar.js"></script>
+    <script src="assets/js/lib/preloader/pace.min.js"></script>
+    <!-- sidebar -->
+    
+    <!-- bootstrap -->
+
+    <script src="assets/js/lib/bootstrap.min.js"></script><script src="assets/js/scripts.js"></script>
+    <!-- scripit init
+    <script src="assets/js/lib/data-table/datatables.min.js"></script>
+    <script src="assets/js/lib/data-table/buttons.dataTables.min.js"></script>
+    <script src="assets/js/lib/data-table/dataTables.buttons.min.js"></script>
+    <script src="assets/js/lib/data-table/buttons.flash.min.js"></script>
+    <script src="assets/js/lib/data-table/jszip.min.js"></script>
+    <script src="assets/js/lib/data-table/pdfmake.min.js"></script>
+    <script src="assets/js/lib/data-table/vfs_fonts.js"></script>
+    <script src="assets/js/lib/data-table/buttons.html5.min.js"></script>
+    <script src="assets/js/lib/data-table/buttons.print.min.js"></script>
+    <script src="assets/js/lib/data-table/datatables-init.js"></script>
+   -->
+    <script src="assets/js/lib/sweetalert/sweetalert.min.js"></script> 
+    <script src="assets/js/traininquire.js"></script>
+    <script src="assets/js/write_sidebar.js"></script>
+    <script src="assets/js/force_login.js"></script>
+
+
+
+
+
+
+
+
+</body>
+
+</html>

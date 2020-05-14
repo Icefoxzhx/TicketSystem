@@ -40,7 +40,6 @@ int main(int argc, char* argv[])
     char revData[255];//接收数据缓冲区
     while (1)
     {
-        printf("waiting...\n");
         sClient = accept(slisten, (SOCKADDR*)&remoteAddr, &nAddrlen);
         if (sClient == INVALID_SOCKET)
         {
@@ -52,7 +51,6 @@ int main(int argc, char* argv[])
             printf("server attack from outside!\n");
             continue;
         }
-        printf("Connection successful:%s\n", inet_ntoa(remoteAddr.sin_addr));
         int ret = recv(sClient, revData, 255, 0);
         stringstream sstr(revData);
         int cmd_length = 0;
@@ -65,10 +63,10 @@ int main(int argc, char* argv[])
     //    cout << ii << endl;
         char real_command[1000];
         strncpy_s(real_command, revData+ii, cmd_length);
-        printf("%s\n", real_command);
+        printf("read command: %s\n", real_command);
         if (1)
         {
-            char result[100] = "cong258258 周聪 cong258258@sjtu.edu.cn 1";
+            char result[1000] = "HAPPY_TRAIN G\n上院 xx-xx xx:xx -> 07-01 19:19 0 1000\n中院 07-02 05:19 -> 07-02 05:24 114 1000\n下院 07-02 15:24 -> xx-xx xx:xx 628 x\n";
             printf("%s\n", result);
             send(sClient, result, strlen(result), 0);
         }
