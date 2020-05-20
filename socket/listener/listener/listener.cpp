@@ -66,7 +66,9 @@ int main(int argc, char* argv[])
         printf("read command: %s\n", real_command);
         if (1)
         {
-            char result[1000] = "HAPPY_TRAIN G\n上院 xx-xx xx:xx -> 07-01 19:19 0 1000\n中院 07-02 05:19 -> 07-02 05:24 114 1000\n下院 07-02 15:24 -> xx-xx xx:xx 628 x\n";
+            //char result[1000] = "HAPPY_TRAIN G\n上院 xx-xx xx:xx -> 07-01 19:19 0 1000\n中院 07-02 05:19 -> 07-02 05:24 114 1000\n下院 07-02 15:24 -> xx-xx xx:xx 628 x\n";
+            //char result[1000] = "2\nHAPPY_TRAIN 中院 08-17 05:24 -> 下院 08-17 15:24 514 1000\nSAD_TRAIN Artr 06-17 07:24 -> Bata 08-17 19:24 514 10\n";
+            char result[1000] = "3\n[pending] HAPPY_TRAIN 上院 08-17 05:24 -> 下院 08-17 15:24 628 500\n[success] SAD_TRAIN Artr 06-17 07:24 -> Bata 08-17 19:24 514 10\n[refunded] SADEST_TRAIN Article 05-17 17:24 -> Baqa 06-17 19:56 764 170\n";
             printf("%s\n", result);
             send(sClient, result, strlen(result), 0);
         }

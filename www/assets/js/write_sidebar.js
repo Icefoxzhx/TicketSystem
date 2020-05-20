@@ -15,6 +15,14 @@ sidebarele[0].innerHTML = '\
                 <li><a href="traindelete.html"> 删除车次 </a></li>\
         	</ul>\
         </li>\
+        <li><a class="sidebar-sub-toggle"><i class="ti-calendar"></i> 车票操作 <span class="sidebar-collapse-icon ti-angle-down"></span></a>\
+            <ul>\
+                <li><a href="ticketinquire.html"> 查询车票 </a></li>\
+                <li><a href="tickettransfer.html"> 查询换乘信息 </a></li>\
+                <li><a href="ticketbuy.html"> 购买车票 </a></li>\
+                <li><a href="userman.html"> 查询购票信息 </a></li>\
+            </ul>\
+        </li>\
         <li><a class="sidebar-sub-toggle"><i class="ti-layout"></i> 用户管理 <span class="sidebar-collapse-icon ti-angle-down"></span></a>\
         	<ul>\
         		<li><a href="userman.html"> 用户信息查询修改 </a></li>\
