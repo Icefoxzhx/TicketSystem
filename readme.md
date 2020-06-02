@@ -10,22 +10,68 @@ https://github.com/ZYHowell/Ticket_Booking_System
 
 https://github.com/AryaGuo/Train-ticket-booking-system
 
+https://github.com/jinhongyii/TTRS-final
+
+17作业要求：https://github.com/camelop/ticket_office_cw-DS2018
+
 git教程：https://www.liaoxuefeng.com/wiki/896043488029600
 
 ## Questions
 
-1.候补？（会影响到username的购票信息）
-
-会调用到候补的操作：buy_ticket，refund_ticket
-
-朴素算法：对于每个站点的每个train_ID都记录候补情况（username的第几个购票信息），那么buy_ticket的时候只需要打标记，总时间复杂度O(10^8)；在refund_ticket的时候将所有经过该票区间的候补信息全部遍历一遍（有一个问题，应该取出所有涉及这一段区间的购票信息，按照操作时间从早到晚判断）这个的时间复杂度不会算了...
+- query_transfer(有没有更好的算法啊qwq我把朴素的写在bptree_station-查询-3里面了)
 
 
-2.query_transfer(有没有更好的算法啊qwq我把朴素的写在bptree_station-查询-3里面了)
 
-什么样子的是最优解啊qaq
+- add_user的cur_username是登陆了的吗
+
+要判断是否已经登陆
+
+- buy_ticket返回一定在int内吗qwq
+
+- query_order如果未登录返回什么
+
+
+
+- 候补操作再开一个bpt吗?
+- if_delete是否假装删除？
+- order 为火车在站里的位置？？？？
+- 用位运算存储第i辆火车是否经过某一站点   那么此时的station中的起止时间是否？？？
+
+
+
+- hzstring里面是否要再把char*的重载运算符写一遍？
+
+
+
+
+## Notes
+
+- 注意在输入输出的时候某些东西的UTF-8转码
+
+- 总票价在int范围之内
+
+- add_train / add_user的时候要先判断id是否冲突
+
+
+
+- string 改成 char 数组 则固定长度
+- 多日期存成好多好多量
+- 假装删除
+- order + 时间戳
+- bpt的文件名在10字节以内
+
+
+
+- 在hzstring中的转换？
+
+off_t
 
 ## bptree
+
+bptree: (key, value, size, comp)
+
+
+
 
 说明：bp_tree里面的基本信息默认只有在modify_profile的时候会变化，而列车/车站的基本信息默认不变（看到会变的话和我说一下啊）
 
@@ -35,7 +81,7 @@ key:(username)
 
 存储
 
-1.基本信息：username, password, name, mail, privilege
+1.基本信息：username, password, name, mail, privilege, login(判断是否登录了)
 
 2.购票信息：用数组（vector？）按照购票时间顺序存储，可能会修改购票的状态
 
@@ -64,13 +110,13 @@ key:(station_id, train_id)
 
 存储
 
-1.基本信息：start_stop_time, end_stop_time, price(为当前train_id从这一站到下一站的票价), sale_date, release(标记是否发布该车辆)
+1.基本信息：station_id, train_id, arrive_time, depart_time, price(为当前train_id从这一站到下一站的票价), sale_date
 
 2.维护信息：left_ticket(当前train_id从这一站到下一站还剩的票数), 候补队列（当前train_id从这一站到下一站的候补队列，这要用什么存呢？）
 
 修改
 
-1.add_train 添加从station_1...station_num的新节点，并标为未发布
+1.add_train 添加从station_1...station_num的新节点
 
 2.release_train 将所有涉及到的相关节点标为发布
 
@@ -112,6 +158,19 @@ key:(train_id)
 查询
 
 1.query_train 找到(train_id)，判断sale_date是否在查询范围内
+
+
+### bptree_order
+
+key:(user_id, buy_date/buy_number(////////////), train_id, start_station, end_station)
+
+value:
+1. user_id, buy_date, train_id, start_station, end_station, ticket_num, travel_date, queue(是否候补), status(状态：买票/候补/退票)
+
+
+QQQQQQQQQQQQq
+
+为什么他们的ticket_key的operator<是有些正序有些倒序？？？？
 
 
 ## 存储说明
