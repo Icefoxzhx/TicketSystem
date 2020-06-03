@@ -31,14 +31,18 @@ struct User{
 
 typedef hzstring<21> Train_id;
 typedef hzstring<12> Station_id;
+typedef hzstring<6> Date;
+typedef hzstring<6> Time;
 
 const int MAX_DATE = 97, DAYS[13]={0,31,29,31,30,31,30,31,31,30,31,30,31};
+
+const Train_id MIN_TRAIN_ID = "!", MAX_TRAIN_ID = "~";
 
 enum Ticket_status{succeed, queue, refund};
 
 struct Train{
     Train_id train_id;
-    int station_num, seat_num;
+    int station_num, seat_num, sale_date;
 
     int route_pos, ticket_left_pos;
 
