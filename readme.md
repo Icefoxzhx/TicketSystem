@@ -18,13 +18,11 @@ git教程：https://www.liaoxuefeng.com/wiki/896043488029600
 
 ## Questions
 
-- query_transfer(有没有更好的算法啊qwq我把朴素的写在bptree_station-查询-3里面了)
-
-
-
 - add_user的cur_username是登陆了的吗
 
 要判断是否已经登陆
+
+
 
 - buy_ticket返回一定在int内吗qwq
 
@@ -32,10 +30,13 @@ git教程：https://www.liaoxuefeng.com/wiki/896043488029600
 
 
 
-- 候补操作再开一个bpt吗?
 - if_delete是否假装删除？
 - order 为火车在站里的位置？？？？
 - 用位运算存储第i辆火车是否经过某一站点   那么此时的station中的起止时间是否？？？
+
+
+
+- query_train中的sum_price是否在int范围内
 
 
 
@@ -58,7 +59,15 @@ git教程：https://www.liaoxuefeng.com/wiki/896043488029600
 - 多日期存成好多好多量
 - 假装删除
 - order + 时间戳
-- bpt的文件名在10字节以内
+
+
+
+- add_train中的票价是两站之间的票价，query_train中的票价是累计票价
+
+
+
+- 注意有些int在读入的时候是string
+- string都用char!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 
 
@@ -83,7 +92,7 @@ key:(username)
 
 1.基本信息：username, password, name, mail, privilege, login(判断是否登录了)
 
-2.购票信息：用数组（vector？）按照购票时间顺序存储，可能会修改购票的状态
+
 
 修改
 
@@ -160,6 +169,8 @@ key:(train_id)
 1.query_train 找到(train_id)，判断sale_date是否在查询范围内
 
 
+
+
 ### bptree_order
 
 key:(user_id, buy_date/buy_number(////////////), train_id, start_station, end_station)
@@ -173,6 +184,16 @@ QQQQQQQQQQQQq
 为什么他们的ticket_key的operator<是有些正序有些倒序？？？？
 
 
+
+### bptree_refund
+
+key: (user_id, buy_time)
+
+value:()
+
+
+
+
 ## 存储说明
 
 ### class_ticket
@@ -182,3 +203,79 @@ QQQQQQQQQQQQq
 ### class_user
 
 ### class_train
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+### bpt_train
+
+key : train_id
+
+value: Train ( )
+
+
+
+### bpt_station
+
+key : station_id , train_id
+
+value : int ( the order number of the station in the train)
+
+
+
+### bpt_record
+
+key : 
+
+
+
+### bpt_refund
+
+key : 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+### route_file
+
+里面存储每个train_id对应的所有station的信息
+
+(station_id, arrive_time, depart_time, price, ticket_left)
+
+price 是和上一站的票价
+
+ticket_left是到下一站的剩余票数
+
+
+
+### tl_file
+
+每天(0601(0)-0905(96))的剩余票数，如果这天不售票则-1
+
+每站的date按照arrive_time计算
+
+每天*每站
