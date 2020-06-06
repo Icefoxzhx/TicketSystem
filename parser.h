@@ -10,12 +10,8 @@
 #include <cstdio>
 #include "signal.h"
 #include "train_manager.h"
-#include "station_manager.h"
-#include "user_manager.h"
 
-user_system users;
-train_system trains;
-station_system stations;
+train_system Manager;
 
 
 void get_command(std::istream &is, std::ostream &os){
@@ -23,76 +19,77 @@ void get_command(std::istream &is, std::ostream &os){
     while(is >> command){
         //user
         if(command == "add_user"){// -c -u -p -n -m -g
-            os << users.add_user(is) << '\n';
+            os << Manager.add_user(is) << '\n';
             continue;
         }
         if(command == "login"){// -u -p
-            os << users.login(is) << '\n';
+            os << Manager.login(is) << '\n';
             continue;
         }
         if(command == "logout"){//-u
-            os << users.logout(is) << '\n';
+            os << Manager.logout(is) << '\n';
             continue;
         }
         if(command == "query_profile"){//-u
-            users.query_profile(is, os);
+            Manager.query_profile(is, os);
             continue;
         }
         if(command == "modify_profile"){//-c -u (-p) (-n) (-m) (-g)
-            users.modify_profile(is, os);
+            Manager.modify_profile(is, os);
             continue;
         }
 
         if(command == "query_order"){//-u
-            users.query_order(is, os);
+            Manager.query_order(is, os);
             continue;
         }
 
 
         //train
         if(command == "add_train"){//-i -n -m -s -p -x -t -o -d -y
-            os << trains.add_train(is) << '\n';
+            os << Manager.add_train(is) << '\n';
             continue;
         }
         if(command == "release_train"){//-i
-            os << trains.release_train(is) << '\n';
+            os << Manager.release_train(is) << '\n';
             continue;
         }
         if(command == "query_train"){// -i -d
-            trains.query_train(is, os);
+            Manager.query_train(is, os);
             continue;
         }
         if(command == "delete_train"){//-i
-            os << trains.delete_train(is) << '\n';
+            os << Manager.delete_train(is) << '\n';
             continue;
         }
         if(command == "query_ticket"){//-s -t -d -p
-            trains.query_ticket(is, os);
+            Manager.query_ticket(is, os);
             continue;
         }
         if(command == "query_transfer"){
-            trains.query_transfer(is, os);
+            Manager.query_transfer(is, os);
             continue;
         }
         if(command == "buy_ticket"){
-            os << trains.buy_ticket(is, os) << '\n';
+            Manager.buy_ticket(is, os);
             continue;
         }
         if(command == "refund_ticket"){
-            os << trains.refund_ticket(is) << '\n';
+            os << Manager.refund_ticket(is) << '\n';
             continue;
         }
 
 
 
         if(command == "clean"){
-
+            Manager.init();
+            Manager.user_init();
+            os << "1\n";
             continue;
         }
 
         if(command == "exit"){
-
-            //?????????????
+            os<<"bye\n";
             break;
         }
     }

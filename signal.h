@@ -24,7 +24,6 @@ struct User{
     Name name;
     Email email;
     int privilege;
-    int buy_cnt;
 };
 
 //train
@@ -38,7 +37,7 @@ const int MAX_DATE = 97, DAYS[13]={0,31,29,31,30,31,30,31,31,30,31,30,31};
 
 const Train_id MIN_TRAIN_ID = "!", MAX_TRAIN_ID = "~";
 
-enum Ticket_status{succeed, queue, refund};
+enum Ticket_status{ticket_success, ticket_pending, ticket_refund};
 
 struct Train{
     Train_id train_id;
@@ -46,6 +45,7 @@ struct Train{
 
     int route_pos, ticket_left_pos;
 
+    int buy_num;
     char type;
     bool release;
 

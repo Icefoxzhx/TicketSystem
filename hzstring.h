@@ -11,9 +11,9 @@
 template <int N>
 class hzstring{
 private:
-    char ch[N+1];
 
 public:
+    char ch[N+1];
     hzstring() {ch[0] = '\0';}
 
     hzstring(const char *rhs){
