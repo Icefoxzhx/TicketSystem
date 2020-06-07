@@ -40,11 +40,12 @@ private:
         //Station_id + Train_id
         Station_id station_id;
         Train_id train_id;
+        Station_key(){}
         Station_key(const Station_id &_s, const Train_id &_t): station_id(_s), train_id(_t){}
-        bool operator ==(const Station_key &rhs){
+        bool operator ==(const Station_key &rhs) const{
             return (station_id == rhs.station_id) && (train_id == rhs.train_id);
         }
-        bool operator < (const Station_key &rhs){
+        bool operator < (const Station_key &rhs) const{
             return (station_id < rhs.station_id) ||
                    (station_id == rhs.station_id && train_id < rhs.train_id);
         }
@@ -56,10 +57,10 @@ private:
     struct Order_key{
         Userid user_id;
         int user_buy_order;
-        bool operator ==(const Order_key &rhs){
+        bool operator ==(const Order_key &rhs) const{
             return (user_id == rhs.user_id) && (user_buy_order == rhs.user_buy_order);
         }
-        bool operator < (const Order_key &rhs){
+        bool operator < (const Order_key &rhs) const{
             if(user_id != rhs.user_id) return (user_id < rhs.user_id);
             return (user_buy_order < rhs.user_buy_order);
         }
@@ -79,10 +80,10 @@ private:
     struct Pending_key{
         Train_id train_id;
         int pending_buy_time;
-        bool operator == (const Pending_key &rhs){
+        bool operator == (const Pending_key &rhs) const{
             return (train_id == rhs.train_id) && (pending_buy_time == rhs.pending_buy_time);
         }
-        bool operator <(const Pending_key &rhs){
+        bool operator <(const Pending_key &rhs) const{
             if(train_id != rhs.train_id) return (train_id < rhs.train_id);
             return(pending_buy_time < rhs.pending_buy_time);
         }
@@ -101,9 +102,11 @@ private:
         Train_id train_id;
         int start_time, end_time, price, seat_left, val;
 
-        bool operator < (const query_ticket_t &rhs){
-            return val < rhs.val;
-        }
+        bool operator < (const query_ticket_t &rhs) const{return val < rhs.val;}
+        bool operator == (const query_ticket_t &rhs) const{return val == rhs.val;}
+        bool operator > (const query_ticket_t &rhs) const{return val > rhs.val;}
+        bool operator <= (const query_ticket_t &rhs) const{return val <= rhs.val;}
+        bool operator >= (const query_ticket_t &rhs) const{return val >= rhs.val;}
     };
 
 
@@ -302,7 +305,9 @@ public:
         }
 
         for(int i = 0;i < len;++i){
-            Station_key tmp_key(tmp_station[i].station_id, tr.train_id);
+            Station_key tmp_key;
+            tmp_key.station_id = tmp_station[i].station_id;
+            tmp_key.train_id = tr.train_id;
             station_record.insert(tmp_key, i);
         }
 
@@ -413,7 +418,9 @@ public:
         rfile.read(reinterpret_cast<char*> (tmp_station), sizeof(Station) * len);
 
         for(int i = 0;i < len;++i){
-            Station_key tmp_key(tmp_station[i].station_id, tr.train_id);
+            Station_key tmp_key;
+            tmp_key.station_id = tmp_station[i].station_id;
+            tmp_key.train_id = tr.train_id;
             station_record.remove(tmp_key);
         }
         train_record.remove(tr.train_id);

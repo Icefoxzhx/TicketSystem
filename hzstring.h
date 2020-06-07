@@ -50,6 +50,18 @@ public:
         return *this;
     }
 
+    hzstring operator=(const char* rhs){
+        if(rhs != nullptr) {
+            int i = 0;
+            while (rhs[i] != '\0' && i < N) {
+                ch[i] = rhs[i];
+                ++i;
+            }
+            ch[i] = '\0';
+        }
+        return *this;
+    }
+
     bool operator <(const hzstring &rhs) const{
         if(rhs == nullptr) return false;
         int l1, l2, l;
@@ -88,6 +100,22 @@ public:
 
     bool operator >=(const hzstring &rhs) const{
         return ((*this) == rhs) || ((*this) > rhs);
+    }
+
+    bool operator ==(const char* rhs) const{
+        if(rhs == nullptr) return false;
+        int l1, l2;
+        l1 = strlen(ch);
+        l2 = strlen(rhs);
+        if(l1 != l2) return false;
+        for(int i = 0;i < l1;++i)
+            if(ch[i] != rhs[i])
+                return false;
+        return true;
+    }
+
+    bool operator !=(const char* rhs) const{
+        return !((*this) == rhs);
     }
 
     char& operator[](int index){// or size_t????????????????????
