@@ -941,14 +941,15 @@ public:
         if(res_user.first) return FAIL;
 
         find_t_user res_cur = user_record.find(cur_id);
-        if(!res_cur.first) return FAIL;
+        if(Change && !res_cur.first) return FAIL;
 
-        int pos_cur = res_cur.second.user_pos;
-        User user_cur;
-        ufile.seekg(pos_cur, std::ios::beg);
-        ufile.read(reinterpret_cast<char*> (&user_cur), sizeof(User));
-
-        if(Change && !check_privilege(user_cur, U)) return FAIL;
+        if(Change) {
+            int pos_cur = res_cur.second.user_pos;
+            User user_cur;
+            ufile.seekg(pos_cur, std::ios::beg);
+            ufile.read(reinterpret_cast<char *> (&user_cur), sizeof(User));
+            if (!check_privilege(user_cur, U)) return FAIL;
+        }
 
         user_login[U.user_id] = false;
         if(!Change) {U.privilege = 10; Change = true;}
@@ -976,7 +977,8 @@ public:
         User tmp_user;
         ufile.seekg(user_pos, std::ios::beg);
         ufile.read(reinterpret_cast<char*> (&tmp_user), sizeof(User));
-        if(tmp_user.password != _p) return FAIL;
+
+        if(strcmp(tmp_user.password.ch,_p.ch)) return FAIL;
 
         user_login[_u] = true;
         return SUCCESS;
