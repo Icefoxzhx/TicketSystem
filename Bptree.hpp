@@ -17,7 +17,7 @@ class Bptree{
 	typedef vector<pKV> find_list;
 	off_t root;
 	FILE *file;
-	char filename[10];
+	char filename[20];
 	void save_info(){
 		fseek(file,0,SEEK_SET);
 		fwrite(&root,sizeof(off_t),1,file);
