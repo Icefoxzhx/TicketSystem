@@ -437,7 +437,7 @@ public:
 
         is >> _z >> _s >> _z >> _t >> _z >> _d;
         is.getline(str,50);
-        if(strlen(str) && str[0] == 'c') p_c = true;
+        if(strlen(str) && str[1] == 'c') p_c = true;
 
         int date = Date_to_int(_d);
         if(date < 0 || date >= MAX_DATE || _s == _t) return FAIL;
@@ -534,7 +534,7 @@ public:
 
         is >> _z >> _s >> _z >> _t >> _z >> _d;
         is.getline(tmp_str,50);
-        if(strlen(tmp_str) && tmp_str[0] == 'c') p_c = true;
+        if(strlen(tmp_str) && tmp_str[1] == 'c') p_c = true;
 
         int date = Date_to_int(_d);
         if(date < 0 || date >= MAX_DATE || _s == _t) return FAIL;
@@ -663,7 +663,7 @@ public:
 
         is >> _z >> _u >> _z >> _i >> _z >> _d >> _z >> _n >> _z >> _f >> _z >> _t;
         is.getline(tmp_str, 20);
-        if(strlen(tmp_str) && tmp_str[0] == 't') _q = true;
+        if(strlen(tmp_str) && tmp_str[1] == 't') _q = true;
         int date = Date_to_int(_d);
         if(date < 0 || date >= MAX_DATE || _f == _t) {os << "-1\n";return;}
 
@@ -773,7 +773,7 @@ public:
 
         is >> _z >> _u;
         is.getline(str,50);
-        if(strlen(str)){ _n = 0; for(int i = 0; i < strlen(str);++i) _n = _n*10 + str[i] - '0';}
+        if(strlen(str)){ _n = 0; for(int i = 1; i < strlen(str);++i) _n = _n*10 + str[i] - '0';}
 
         find_t_user tmp_res_user = user_record.find(_u);
         if(!tmp_res_user.first || !user_login[_u]) return FAIL;
@@ -1014,7 +1014,7 @@ public:
 
         ufile.seekg(user_pos_query, std::ios::beg);
         ufile.read(reinterpret_cast<char*> (&user_query), sizeof(User));
-        if(!user_login[user_cur.user_id]) {os <<user_cur.user_id <<" " ;os << "-1\n"; return;}
+        if(!user_login[user_cur.user_id]) {os << "-1\n"; return;}
         if(user_cur.privilege <= user_query.privilege && _c != _u) {os << "-1\n"; return;}
 
         os << user_query.user_id << " " << user_query.name << " ";

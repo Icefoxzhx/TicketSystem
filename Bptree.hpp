@@ -15,23 +15,27 @@ class Bptree{
 	typedef pair<Key,Value> pKV;
 	typedef char buffer[PAGE_SIZE];
 	typedef vector<pKV> find_list;
-	off_t root;
+	///rec 垃圾回收指针
+	off_t root,rec;
 	FILE *file;
 	char filename[20];
 	void save_info(){
 		fseek(file,0,SEEK_SET);
 		fwrite(&root,sizeof(off_t),1,file);
+		fwrite(&rec,sizeof(off_t),1,file);
 	}
 	void init(){
 		root=-1;
+		rec=-1;
 		save_info();
 	}
 	void read_info(){
 		fseek(file,0,SEEK_SET);
 		fread(&root,sizeof(off_t),1,file);
+		fread(&rec,sizeof(off_t),1,file);
 	}
 	void read_node(char *b,off_t pos){
-		if(!file){puts("Error");exit(1);}
+		//if(!file){puts("Error");exit(1);}
 		fseek(file,pos,SEEK_SET);
 		fread(b,PAGE_SIZE,1,file);
 	}
@@ -41,12 +45,22 @@ class Bptree{
 		//ffulsh?
 	}
 	void save_new_node(char *b){
+		if(rec!=-1){
+			((Node*)b)->pos=rec;
+			fseek(file,rec,SEEK_SET);
+			fread(&rec,sizeof(off_t),1,file);
+			fseek(file,-sizeof(off_t),SEEK_CUR);
+			fwrite(b,PAGE_SIZE,1,file);
+			return;
+		}
 		fseek(file,0,SEEK_END);
 		((Node*)b)->pos=ftell(file);
 		fwrite(b,PAGE_SIZE,1,file);
 	}
 	void del_node(off_t pos){
-
+		fseek(file,pos,SEEK_SET);
+		fwrite(&rec,sizeof(off_t),1,file);
+		rec=pos;
 	}
 	struct Node{
 		bool IsLeaf;
