@@ -970,15 +970,15 @@ public:
         is >> _z >> _u >> _z >> _p;
 
         find_t_user res = user_record.find(_u);
-        if(!res.first) return FAIL;
-        if(user_login[_u] == true) return FAIL;
+        if(!res.first) {return FAIL;}
+        if(user_login[_u] == true) {return FAIL;}
         int user_pos = res.second.user_pos;
 
         User tmp_user;
         ufile.seekg(user_pos, std::ios::beg);
         ufile.read(reinterpret_cast<char*> (&tmp_user), sizeof(User));
 
-        if(strcmp(tmp_user.password.ch,_p.ch)) return FAIL;
+        if(strcmp(tmp_user.password.ch,_p.ch)) {return FAIL;}
 
         user_login[_u] = true;
         return SUCCESS;
@@ -1014,7 +1014,7 @@ public:
 
         ufile.seekg(user_pos_query, std::ios::beg);
         ufile.read(reinterpret_cast<char*> (&user_query), sizeof(User));
-        if(!user_login[user_cur.user_id]) {os << "-1\n"; return;}
+        if(!user_login[user_cur.user_id]) {os <<user_cur.user_id <<" " ;os << "-1\n"; return;}
         if(user_cur.privilege <= user_query.privilege && _c != _u) {os << "-1\n"; return;}
 
         os << user_query.user_id << " " << user_query.name << " ";
@@ -1045,8 +1045,9 @@ public:
         if(!user_login[user_cur.user_id]) {os << "-1\n"; return;}
         if(user_cur.privilege <= user_query.privilege && _c != _u) {os << "-1\n"; return;}
 
-        int str_len = strlen(str), str_p = 0, tmp_p;
+        int str_len = strlen(str), str_p = 1, tmp_p;
         char tmp[30];
+       // os <<"|" << str <<"|    ";
         while(str_p < str_len){//-p-n-m-g
             char modify_type = str[str_p + 1];
             str_p += 3;
@@ -1055,6 +1056,7 @@ public:
             tmp[tmp_p] = '\0';
             str_p++;
 
+            //os << modify_type <<"         ";
             if(modify_type == 'p') {user_query.password = tmp; continue;}
             if(modify_type == 'n') {user_query.name = tmp; continue;}
             if(modify_type == 'm') {user_query.email = tmp; continue;}
@@ -1066,6 +1068,8 @@ public:
 
         ufile.seekp(user_pos_query, std::ios::beg);
         ufile.write(reinterpret_cast<char*> (&user_query), sizeof(User));
+
+       // os << user_query.password<<"                ";
 
         os << user_query.user_id << " " << user_query.name << " ";
         os << user_query.email << " " << user_query.privilege <<"\n";
