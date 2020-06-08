@@ -19,7 +19,7 @@ void get_command(std::istream &is, std::ostream &os){
     while(is >> command){
         //user
         //-----test-----
-        os<<"command: " << command <<"--";
+        //os<<"command: " << command <<"--";
         //-----test-----
         if(strcmp(command, "add_user") == 0){// -c -u -p -n -m -g
             os << Manager.add_user(is) << '\n';
