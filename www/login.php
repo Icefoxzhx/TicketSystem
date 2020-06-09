@@ -49,11 +49,11 @@
  			// }
  			if(isset($_SESSION['username']) && ($_SESSION['username'] == $username))
             {
- 			 	exit("您已经登入了，请不要重新登入！用户名：{$_SESSION['username']}  {$expire}");
+ 			 	exit("您已经登入了，请不要重新登入！用户名：".$_SESSION['username']."{$expire}");
  			}
             else
             {
- 				$_SESSION['username'] = $username;
+ 				$_SESSION['username'] = $username_cookie;
                 $_SESSION['privilege'] = $privilege;
  			}
             header("location:index.html");
