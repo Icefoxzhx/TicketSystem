@@ -109,6 +109,7 @@ private:
         bool operator >= (const query_ticket_t &rhs) const{return val >= rhs.val;}
     };
 
+    map<Station_id, query_ticket_t> station_transfer;
 
     std::fstream rfile;
     std::fstream tlfile;
@@ -210,6 +211,7 @@ public:
     }
 
     void user_init(){
+        user_login.clear();
         Change = false;
         std::ofstream ofile;
         ofile.open("user_file");
@@ -428,7 +430,7 @@ public:
         return SUCCESS;
     }
 
-    int query_ticket(std::istream &is, std::ostream &os){//-s -t -d (-p time)
+    void query_ticket(std::istream &is, std::ostream &os){//-s -t -d (-p time)
         Station_id _s, _t;
         Date _d;
         bool p_c = false; // false == time   true == cost
@@ -440,14 +442,14 @@ public:
         if(strlen(str) && str[1] == 'c') p_c = true;
 
         int date = Date_to_int(_d);
-        if(date < 0 || date >= MAX_DATE || _s == _t) return FAIL;
+        if(date < 0 || date >= MAX_DATE || _s == _t) {os << "-1\n"; return;}
 
         Station_key start_key_1(_s, MIN_TRAIN_ID), start_key_2(_s, MAX_TRAIN_ID);
         find_t_v_station tmp_start_station = station_record.find(start_key_1, start_key_2);
 
         Station_key end_key_1(_t, MIN_TRAIN_ID), end_key_2(_t, MAX_TRAIN_ID);
         find_t_v_station tmp_end_station = station_record.find(end_key_1, end_key_2);
-
+/*
         vector<query_ticket_t> vec_train;
         auto iter_start = tmp_start_station.begin();
         auto iter_end = tmp_end_station.begin();
@@ -471,17 +473,17 @@ public:
             Station start_station, end_station, begin_station;
             rfile.seekg(tr.route_pos, std::ios::beg);
             rfile.read(reinterpret_cast<char*> (&begin_station), sizeof(Station));
-            rfile.seekg(tr.route_pos + sizeof(Station) * (start_order - 1), std::ios::beg);
+            rfile.seekg(tr.route_pos + sizeof(Station) * start_order, std::ios::beg);
             rfile.read(reinterpret_cast<char*> (&start_station), sizeof(Station));
             int date_to_begin = date - ((start_station.depart_time/1440 - begin_station.depart_time/1440));
             if(date_to_begin < start_sale_date || date_to_begin > end_sale_date){
                 ++iter_start; ++iter_end; continue;
             }
 
-            rfile.seekg(tr.route_pos + sizeof(Station) * (end_order - 1), std::ios::beg);
+            rfile.seekg(tr.route_pos + sizeof(Station) * end_order, std::ios::beg);
             rfile.read(reinterpret_cast<char*> (&end_station), sizeof(Station));
 
-            tlfile.seekg(tr.ticket_left_pos + sizeof(int) * (date_to_begin-1) * len + start_order - 1, std::ios::beg);
+            tlfile.seekg(tr.ticket_left_pos + sizeof(int) * date_to_begin * len + start_order, std::ios::beg);
             tlfile.read(reinterpret_cast<char*> (&tmp_tl), sizeof(int) * l_query);
 
             int tmp_seat_left = tmp_tl[0];
@@ -519,13 +521,11 @@ public:
         }
 
         delete[] tmp_tl;
-        delete[] ans;
-        return SUCCESS;
+        delete[] ans;*/
+        return;
     }
 
-    ////////////////////////////////////////////////////////////////////////
-
-    int query_transfer(std::istream &is, std::ostream &os){//-s -t -d (-p)////////////////
+    void query_transfer(std::istream &is, std::ostream &os){//-s -t -d (-p)////////////////
         Station_id _s, _t;
         Date _d;
         bool p_c = false; // false time true cost
@@ -537,18 +537,23 @@ public:
         if(strlen(tmp_str) && tmp_str[1] == 'c') p_c = true;
 
         int date = Date_to_int(_d);
-        if(date < 0 || date >= MAX_DATE || _s == _t) return FAIL;
+        if(date < 0 || date >= MAX_DATE || _s == _t) {os <<"0\n"; return;}
 
+        station_transfer.clear();
 
-     /*   Station_key start_key_1(_s, MIN_TRAIN_ID), start_key_2(_s, MAX_TRAIN_ID);
-        find_t_station tmp_start_station = station_record.find(start_key_1, start_key_2);
+        Station_key start_key_1(_s, MIN_TRAIN_ID), start_key_2(_s, MAX_TRAIN_ID);
+        find_t_v_station Tmp_start_station = station_record.find(start_key_1, start_key_2);
 
         Station_key end_key_1(_t, MIN_TRAIN_ID), end_key_2(_t, MAX_TRAIN_ID);
-        find_t_station tmp_end_station = station_record.find(end_key_1, end_key_2);
+        find_t_v_station Tmp_end_station = station_record.find(end_key_1, end_key_2);
 
-        vector<query_ticket_t> vec_train_start;
-        auto iter_start = tmp_start_station.begin();
-        while(iter_start != tmp_start_station.end()){
+        auto iter_start = Tmp_start_station.begin(), iter_end = Tmp_end_station.begin();
+        Station *all_station = new Station[105];
+        int ans = -1, *tmp_tl = new int[105];
+        Station_id trans_station_id;
+        query_ticket_t ans1, ans2;
+
+        while(iter_start != Tmp_start_station.end()){
             Train_id id_1((*iter_start).first.train_id);
             int start_order = (*iter_start).second;
             find_t_train res = train_record.find(id_1);
@@ -557,97 +562,186 @@ public:
             Train tr = res.second;
             int start_sale_date = tr.sale_date/1000, end_sale_date = tr.sale_date%1000;
             int len = tr.station_num;
-            int l_query = end_order - start_order + 1;
+            int l_query = tr.station_num - start_order + 1;
 
-            Station start_station, end_station, begin_station;
+            Station begin_station, tmp_station, start_station;
             rfile.seekg(tr.route_pos, std::ios::beg);
             rfile.read(reinterpret_cast<char*> (&begin_station), sizeof(Station));
-            rfile.seekg(tr.route_pos + sizeof(Station) * (start_order - 1), std::ios::beg);
-            rfile.read(reinterpret_cast<char*> (&start_station), sizeof(Station));
-            int date_to_begin = date - ((start_station.depart_time/1440 - begin_station.depart_time/1440));
-            if(date_to_begin < start_sale_date || date_to_begin > end_sale_date){
-                ++iter_start; continue;
+            rfile.seekg(tr.route_pos + sizeof(Station) * start_order, std::ios::beg);
+            rfile.read(reinterpret_cast<char*> (&all_station), sizeof(Station) * l_query);
+            start_station = all_station[0];
+
+            //--whether pass the end_station--
+            int end_order = -1;
+            for(int i = 1;i < l_query;++i){
+                if(all_station[i].station_id == _t){
+                    end_order = i; break;
+                }
+            }
+            if(end_order != -1){
+                Station end_station = all_station[end_order];
+                for(int i = 1;i < end_order;++i){
+                    tmp_station = all_station[i];
+                    if(station_transfer.find(tmp_station.station_id) != station_transfer.end()){
+                        query_ticket_t tmp_trans_ticket = station_transfer[tmp_station.station_id];
+                        int tmp_val = tmp_trans_ticket.val;
+                        //attention date
+                        int arr_t = tmp_trans_ticket.start_time;
+                        int arr_d = arr_t / 1440 + date; arr_t %= 1440;
+                        int dep_d = arr_d + (tmp_station.depart_time/1440 - tmp_station.arrive_time/1440);
+
+                        if(end_sale_date < dep_d - (tmp_station.depart_time/1440-begin_station.depart_time/1440))
+                            continue;
+
+                        dep_d = max(dep_d, start_sale_date);
+                        int dep_t = dep_d*1440 + tmp_station.depart_time % 1440;
+
+                        if(p_c) tmp_val += end_station.price - tmp_station.price;//cost
+                        else tmp_val = end_station.arrive_time - tmp_station.depart_time + dep_t;
+
+                        if(ans == -1 || tmp_val < ans){
+                            ans = tmp_val;
+                            trans_station_id = tmp_station.station_id;
+                            ans1 = tmp_trans_ticket;
+                            //HAPPY_TRAIN 中院 08-17 05:24 -> 下院 08-17 15:24 514 1000
+                            ans2.train_id = tr.train_id;
+                            ans2.start_time = dep_t;
+                            ans2.end_time = dep_t + end_station.arrive_time - tmp_station.depart_time;
+                            ans2.price = end_station.price - tmp_station.price;
+                       }
+                    }
+                }
             }
 
 
+            int start_d = date + (start_station.depart_time/1440-begin_station.depart_time/1440);
+            if(end_sale_date < start_d) continue;
 
+            start_d = max(start_d, start_sale_date);
+            int start_t = start_d*1440 + start_station.depart_time%1440;
+
+            for(int i = 1;i < l_query;++i) {
+                tmp_station = all_station[i];
+                int tmp_val;
+                if(p_c) tmp_val = tmp_station.price - start_station.price;//cost
+                else tmp_val = tmp_station.arrive_time - start_station.depart_time + start_station.depart_time%1440;//time;
+
+                if(station_transfer.find(tmp_station.station_id) == station_transfer.end() ||
+                   tmp_val < station_transfer[tmp_station.station_id].val){
+                    query_ticket_t tmp_trans_ticket;
+                    tmp_trans_ticket.val = tmp_val;
+                    tmp_trans_ticket.start_time = start_t;
+                    tmp_trans_ticket.end_time = tmp_station.arrive_time - start_station.depart_time + start_t;
+                    tmp_trans_ticket.train_id = tr.train_id;
+                    tmp_trans_ticket.price = tmp_station.price - start_station.price;
+                    station_transfer[tmp_station.station_id] = tmp_trans_ticket;
+                }
+            }
             ++iter_start;
         }
 
 
-
-
-        auto iter_end = tmp_end_station.begin();
-        int *tmp_tl = new int [105];
-
-        while(iter_start != tmp_start_station.end() && item_end != tmp_end_station.end()){
-            Train_id id_1((*iter_start).first.train_id), id_2((*iter_end).first.train_id);
-            if(id_1 < id_2) {++iter_start; continue;}
-            if(id_2 < id_1) {++iter_end; continue;}
-
-            int start_order = (*iter_start).second, end_order = (*iter_end).second;
-            if(start_order >= end_order) {++iter_start; ++iter_end; continue;}
+        while(iter_end != Tmp_end_station.end()){
+            Train_id id_1((*iter_end).first.train_id);
+            int end_order = (*iter_start).second;
             find_t_train res = train_record.find(id_1);
-            if(!res.first || !res.second.release) {++iter_start; ++iter_end; continue;}
+            if(!res.first || !res.second.release) {++iter_end; continue;}
 
             Train tr = res.second;
             int start_sale_date = tr.sale_date/1000, end_sale_date = tr.sale_date%1000;
-            int date_to_begin = date - ((start_station.depart_time/1440 - begin_station.depart_time/1440));
-            if(date_to_begin < start_sale_date || date_to_begin > end_sale_date){
-                ++iter_start; ++iter_end; continue;
-            }
-
             int len = tr.station_num;
-            int l_query = end_order - start_order + 1;
+            int l_query = end_order + 1;
 
-            Station start_station, end_station, begin_station;
+            Station begin_station, tmp_station, end_station;
             rfile.seekg(tr.route_pos, std::ios::beg);
-            rfile.read(reinterpret_cast<char*> (&begin_station), sizeof(Station));
-            rfile.seekg(tr.route_pos + sizeof(Station) * (start_order - 1), std::ios::beg);
-            rfile.read(reinterpret_cast<char*> (&start_station), sizeof(Station));
-            rfile.seekg(tr.route_pos + sizeof(Station) * (end_order - 1), std::ios::beg);
-            rfile.read(reinterpret_cast<char*> (&end_station), sizeof(Station));
+            rfile.read(reinterpret_cast<char*> (&all_station), sizeof(Station) * l_query);
+            begin_station = all_station[0]; end_station = all_station[end_order];
 
-            tlfile.seekg(tr.ticket_left_pos + sizeof(int) * (date_to_begin-1) * len + start_order - 1, std::ios::beg);
-            tlfile.read(reinterpret_cast<char*> (&tmp_tl), sizeof(int) * l_query);
+            for(int i = 0;i < end_order;++i){
+                tmp_station = all_station[i];
+                if(station_transfer.find(tmp_station.station_id) != station_transfer.end()){
+                    query_ticket_t tmp_trans_ticket = station_transfer[tmp_station.station_id];
+                    if(tmp_trans_ticket.train_id == tr.train_id) continue;
 
-            int tmp_seat_left = tmp_tl[0];
-            for(int i = 1;i < l_query;++i)
-                if(tmp_tl[i] < tmp_ticket_left)
-                    tmp_seat_left = tmp_tl[i];
+                    int tmp_val = tmp_trans_ticket.val;
+                    //attention date
+                    int arr_t = tmp_trans_ticket.start_time;
+                    int arr_d = arr_t / 1440 + date; arr_t %= 1440;
+                    int dep_d = arr_d;
+                    if(tmp_station.depart_time%1440 > arr_t) dep_d++;
+                    if(end_sale_date < dep_d - (tmp_station.depart_time/1440-begin_station.depart_time/1440))
+                        continue;
 
-            query_ticket_t tmp_t_q;
-            int tmp_val;
-            tmp_t_q.train_id = id_1;
-            tmp_t_q.start_time = start_station.depart_time;
-            tmp_t_q.end_time = end_station.arrive_time;
-            tmp_t_q.seat_left = tmp_seat_left;
-            tmp_t_q.price = end_station.price - start_station.price;
-            if(p_c) tmp_val = tmp_t_q.price;// cost
-            else tmp_val = tmp_t_q.end_time - tmp_t_q.start_time;//time
-            tmp_t_q.val = tmp_val;
+                    dep_d = max(dep_d, start_sale_date);
+                    int dep_t = dep_d*1440 + tmp_station.depart_time % 1440;
 
-            vec_train.push_back(tmp_t_q);
+                    if(p_c) tmp_val += end_station.price - tmp_station.price;//cost
+                    else tmp_val = end_station.arrive_time - tmp_station.depart_time + dep_t;
+
+                    if(ans == -1 || tmp_val < ans){
+                        ans = tmp_val;
+                        ans1 = tmp_trans_ticket;
+                        trans_station_id = tmp_station.station_id;
+                        //HAPPY_TRAIN 中院 08-17 05:24 -> 下院 08-17 15:24 514 1000
+                        ans2.train_id = tr.train_id;
+                        ans2.start_time = dep_t;
+                        ans2.end_time = dep_t + end_station.arrive_time - tmp_station.depart_time;
+                        ans2.price = end_station.price - tmp_station.price;
+                    }
+                }
+            }
+            ++iter_end;
         }
 
-        int len_ans = vec_train.size();
-        query_ticket_t *ans = new query_ticket_t [len_ans];
-        for(int i = 0;i < len_ans;++i) ans[i] = vec_train[i];
-        Quick_Sort<query_ticket_t>(ans, 0, len_ans-1);
+        if(ans == -1) {os <<"0\n"; return;}
 
-        //HAPPY_TRAIN 中院 08-17 05:24 -> 下院 08-17 15:24 514 1000
-        os << len_ans << "\n";
-        for(int i = 0;i < len_ans;++i){
-            os << ans[i].second.train_id << " " << _s << " " << int_to_Date(date) << " ";
-            os << int_to_Time(ans[i].second.start_time) << " -> " << _t << " ";
-            int tmp_date = (ans[i].second.end_time/1440 - ans[i].second.start_time/1440);
-            os << int_to_Date(date + tmp_date) << " " << int_to_Time(ans[i].second.end_time) << " ";
-            os << ans[i].second.price << " " << ans[i].second.seat_left << "\n";
-        }
+        //---ans1---
+        Station_key ans1_key_1(_s, ans1.train_id), ans1_key_2(trans_station_id, ans1.train_id);
+        find_t_station ans1_station_1 = station_record.find(ans1_key_1);
+        find_t_station ans1_station_2 = station_record.find(ans1_key_2);
+        Train tr = train_record.find(ans1.train_id).second;
+
+        int arrd_to_begin = ans1.start_time/1440;
+        int len = tr.station_num, start_order = ans1_station_1.second, end_order = ans1_station_2.second;
+        int l_query = end_order - start_order + 1;
+        tlfile.seekg(tr.ticket_left_pos + sizeof(int) * arrd_to_begin * len + start_order, std::ios::beg);
+        tlfile.read(reinterpret_cast<char*> (&tmp_tl), sizeof(int) * l_query);
+
+        int tmp_seat_left = tmp_tl[0];
+        for(int j = 1;j < l_query;++j)
+            if(tmp_tl[j] < tmp_seat_left)
+                tmp_seat_left = tmp_tl[j];
+
+        os << ans1.train_id << " " << _s << " " << int_to_Date(ans1.start_time/1440) << " ";
+        os << int_to_Time(ans1.start_time%1440) << " -> " << trans_station_id << " ";
+        os << int_to_Date(ans1.end_time/1440) << " " << int_to_Time(ans1.end_time%1440) << " ";
+        os << ans1.price << " " << tmp_seat_left << "\n";
+
+        //---ans2---
+        Station_key ans2_key_1(trans_station_id, ans2.train_id), ans2_key_2(_t, ans2.train_id);
+        find_t_station ans2_station_1 = station_record.find(ans2_key_1);
+        find_t_station ans2_station_2 = station_record.find(ans2_key_2);
+        tr = train_record.find(ans2.train_id).second;
+
+        arrd_to_begin = ans2.start_time/1440;
+        len = tr.station_num, start_order = ans2_station_1.second, end_order = ans2_station_2.second;
+        l_query = end_order - start_order + 1;
+        tlfile.seekg(tr.ticket_left_pos + sizeof(int) * arrd_to_begin * len + start_order, std::ios::beg);
+        tlfile.read(reinterpret_cast<char*> (&tmp_tl), sizeof(int) * l_query);
+
+        tmp_seat_left = tmp_tl[0];
+        for(int j = 1;j < l_query;++j)
+            if(tmp_tl[j] < tmp_seat_left)
+                tmp_seat_left = tmp_tl[j];
+
+        os << ans2.train_id << " " << trans_station_id << " " << int_to_Date(ans2.start_time/1440);
+        os << " " << int_to_Time(ans2.start_time%1440) << " -> " << _t << " ";
+        os << int_to_Date(ans2.end_time/1440) << " " << int_to_Time(ans2.end_time%1440) << " ";
+        os << ans2.price << " " << tmp_seat_left << "\n";
 
         delete[] tmp_tl;
-        delete[] ans;*/
-        return SUCCESS;
+        delete[] all_station;
+        return;
     }
 
     void buy_ticket(std::istream &is, std::ostream &os){//-u -i -d -n -f -t (-q false)
@@ -692,16 +786,16 @@ public:
         Station start_station, end_station, begin_station;
         rfile.seekg(tr.route_pos, std::ios::beg);
         rfile.read(reinterpret_cast<char*> (&begin_station), sizeof(Station));
-        rfile.seekg(tr.route_pos + sizeof(Station) * (start_order - 1), std::ios::beg);
+        rfile.seekg(tr.route_pos + sizeof(Station) * start_order, std::ios::beg);
         rfile.read(reinterpret_cast<char*> (&start_station), sizeof(Station));
 
         int date_to_begin = date - ((start_station.depart_time/1440 - begin_station.depart_time/1440));
         if(date_to_begin < start_sale_date || date_to_begin > end_sale_date) {os <<"-1\n"; return;}
 
-        rfile.seekg(tr.route_pos + sizeof(Station) * (end_order - 1), std::ios::beg);
+        rfile.seekg(tr.route_pos + sizeof(Station) * end_order, std::ios::beg);
         rfile.read(reinterpret_cast<char*> (&end_station), sizeof(Station));
 
-        tlfile.seekg(tr.ticket_left_pos + sizeof(int) * (date_to_begin-1) * len + start_order - 1, std::ios::beg);
+        tlfile.seekg(tr.ticket_left_pos + sizeof(int) * date_to_begin * len + start_order, std::ios::beg);
         tlfile.read(reinterpret_cast<char*> (&tmp_tl), sizeof(int) * l_query);
 
         int tmp_seat_left = tmp_tl[0];
@@ -730,7 +824,7 @@ public:
 
         if(tmp_seat_left >= _n){
             for(int i = 0;i < l_query;++i) tmp_tl[i] -= _n;
-            tlfile.seekp(tr.ticket_left_pos + sizeof(int) * (date_to_begin-1) * len + start_order - 1, std::ios::beg);
+            tlfile.seekp(tr.ticket_left_pos + sizeof(int) * date_to_begin * len + start_order, std::ios::beg);
             tlfile.write(reinterpret_cast<char*> (&tmp_tl), sizeof(int) * l_query);
             os << (tmp_pr * _n) << "\n";
 
@@ -823,16 +917,16 @@ public:
         Station start_station, end_station, begin_station;
         rfile.seekg(tr.route_pos, std::ios::beg);
         rfile.read(reinterpret_cast<char*> (&begin_station), sizeof(Station));
-        rfile.seekg(tr.route_pos + sizeof(Station) * (start_order - 1), std::ios::beg);
+        rfile.seekg(tr.route_pos + sizeof(Station) * start_order, std::ios::beg);
         rfile.read(reinterpret_cast<char*> (&start_station), sizeof(Station));
 
         int date = tmp_order.start_date;
         int date_to_begin = date - ((start_station.depart_time/1440 - begin_station.depart_time/1440));
 
-        rfile.seekg(tr.route_pos + sizeof(Station) * (end_order - 1), std::ios::beg);
+        rfile.seekg(tr.route_pos + sizeof(Station) * end_order, std::ios::beg);
         rfile.read(reinterpret_cast<char*> (&end_station), sizeof(Station));
 
-        tlfile.seekg(tr.ticket_left_pos + sizeof(int) * (date_to_begin-1) * len, std::ios::beg);
+        tlfile.seekg(tr.ticket_left_pos + sizeof(int) * date_to_begin * len, std::ios::beg);
         tlfile.read(reinterpret_cast<char*> (&tmp_tl), sizeof(int) * len);
 
 
@@ -872,7 +966,7 @@ public:
         }
 
         for(int i = start_order;i <= end_order;++i) tmp_tl[i] += _n;
-        tlfile.seekp(tr.ticket_left_pos + sizeof(int) * (date_to_begin-1) * len, std::ios::beg);
+        tlfile.seekp(tr.ticket_left_pos + sizeof(int) * date_to_begin * len, std::ios::beg);
         tlfile.write(reinterpret_cast<char*> (&tmp_tl), sizeof(int) * len);
 
         delete [] tmp_tl;
