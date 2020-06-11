@@ -4,13 +4,14 @@
 #include "parser.h"
 
 int main() {
+    /*
 <<<<<<< HEAD
     freopen("2.in","r",stdin);
     freopen("2.out","w",stdout);
 =======
   //  freopen("1.in","r",stdin);
  //   freopen("1.out","w",stdout);
->>>>>>> fb39cb9bd52340a9005df92643a0b118b3dfe404
+>>>>>>> fb39cb9bd52340a9005df92643a0b118b3dfe404*/
     //system("chcp 65001");
 //    char tmp[50]="";
 //    std::cin >> tmp ;
