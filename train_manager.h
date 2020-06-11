@@ -115,11 +115,11 @@ private:
         Train_id train_id;
         int start_time, end_time, price, seat_left, val;
 
-        bool operator < (const query_ticket_t &rhs) const{return val < rhs.val;}
-        bool operator == (const query_ticket_t &rhs) const{return val == rhs.val;}
-        bool operator > (const query_ticket_t &rhs) const{return val > rhs.val;}
-        bool operator <= (const query_ticket_t &rhs) const{return val <= rhs.val;}
-        bool operator >= (const query_ticket_t &rhs) const{return val >= rhs.val;}
+        bool operator < (const query_ticket_t &rhs) const{return (val < rhs.val) || (val == rhs.val && train_id < rhs.train_id);}
+        bool operator == (const query_ticket_t &rhs) const{return val == rhs.val && train_id == rhs.train_id;}
+        bool operator > (const query_ticket_t &rhs) const{return (val > rhs.val) || (val == rhs.val && train_id > rhs.train_id);}
+        bool operator <= (const query_ticket_t &rhs) const{return (val < rhs.val) || (val == rhs.val && train_id <= rhs.train_id);}
+        bool operator >= (const query_ticket_t &rhs) const{return (val > rhs.val) || (val == rhs.val && train_id >= rhs.train_id);}
     };
 
 //    sjtu::map<Station_id, query_ticket_t> station_transfer;
@@ -804,7 +804,7 @@ public:
 
         int *tmp_tl = new int [105];
         int start_order = tmp_start_station.second, end_order = tmp_end_station.second;
-        if(start_order >= end_order) {os <<"-1\n"; return;}
+        if(start_order >= end_order || _n > tr.seat_num) {os <<"-1\n"; return;}
 
         int start_sale_date = tr.sale_date/1000, end_sale_date = tr.sale_date%1000;
         int len = tr.station_num;
