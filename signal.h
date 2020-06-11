@@ -28,10 +28,10 @@ struct User{
 
 //train
 
-typedef hzstring<21> Train_id;
-typedef hzstring<12> Station_id;
-typedef hzstring<6> Date;
-typedef hzstring<6> Time;
+typedef hzstring<25> Train_id;
+typedef hzstring<35> Station_id;
+typedef hzstring<15> Date;
+typedef hzstring<15> Time;
 
 const int MAX_DATE = 97, DAYS[13]={0,31,29,31,30,31,30,31,31,30,31,30,31};
 

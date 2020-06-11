@@ -3,6 +3,11 @@
 #include <cstdio>
 #include <cstring>
 #include <functional>
+/*
+#include "utility.hpp"
+#include "exceptions.hpp"
+#include "vector.hpp"
+ */
 #include <vector>
 //#define DEBUG
 #endif //TICKETSYSTEM_BPTREE_H
@@ -14,7 +19,8 @@ class Bptree{
 	typedef pair<Key,off_t> entry;
 	typedef pair<Key,Value> pKV;
 	typedef char buffer[PAGE_SIZE];
-	typedef vector<pKV> find_list;
+//	typedef sjtu::vector<pKV> find_list;
+    typedef vector<pKV> find_list;
 	///rec 垃圾回收指针
 	off_t root,rec;
 	FILE *file;
