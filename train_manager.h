@@ -447,6 +447,7 @@ public:
             tmp_key.train_id = tr.train_id;
             station_record.remove(tmp_key);
         }
+
         train_record.remove(tr.train_id);
         delete [] tmp_station;
         return SUCCESS;
@@ -461,7 +462,7 @@ public:
 
         is >> _z >> _s >> _z >> _t >> _z >> _d;
         is.getline(str,50);
-        if(strlen(str) && str[1] == 'c') p_c = true;
+        if(strlen(str) && str[4] == 'c') p_c = true;
 
         int date = Date_to_int(_d);
         if(date < 0 || date >= MAX_DATE || _s == _t) {os << "-1\n"; return;}
@@ -869,6 +870,7 @@ public:
 
             tlfile.seekp(tr.ticket_left_pos + sizeof(int) * (date_to_begin * len + start_order), std::ios::beg);
             tlfile.write(reinterpret_cast<char*> (tmp_tl), sizeof(int) * l_query);
+
             os << ((long long)tmp_pr) * _n << "\n";
 
             tmp_order.status = ticket_success;
@@ -1073,10 +1075,6 @@ public:
         return;
     }
 
-    bool check_privilege(const User &lhs, const User &rhs){// lhs.g > rhs.g
-        return lhs.privilege > rhs.privilege;
-    }
-
     int add_user(std::istream &is){
         //<cur_username>-c，<username>-u，<password>-p，<name>-n，<mailAddr>-m，<privilege>-g
         User U;
@@ -1092,11 +1090,12 @@ public:
         if(Change && !res_cur.first) return FAIL;
 
         if(Change) {
+            if(!user_login[cur_id]) return FAIL;
             int pos_cur = res_cur.second.user_pos;
             User user_cur;
             ufile.seekg(pos_cur, std::ios::beg);
             ufile.read(reinterpret_cast<char *> (&user_cur), sizeof(User));
-            if (!check_privilege(user_cur, U)) return FAIL;
+            if (user_cur.privilege <= U.privilege) return FAIL;
         }
 
         user_login[U.user_id] = false;
@@ -1190,12 +1189,13 @@ public:
         ufile.seekg(user_pos_query, std::ios::beg);
         ufile.read(reinterpret_cast<char*> (&user_query), sizeof(User));
 
-        if(!user_login[user_cur.user_id]) {os << "-1\n"; return;}
-        if(user_cur.privilege <= user_query.privilege && _c != _u) {os << "-1\n"; return;}
+        if(!user_login[_c]) {os << "-1\n"; return;}
+        if(user_cur.privilege < user_query.privilege ||
+        (user_cur.privilege == user_query.privilege && _c != _u)) {os << "-1\n"; return;}
 
         int str_len = strlen(str), str_p = 1, tmp_p;
         char tmp[30];
-       // os <<"|" << str <<"|    ";
+
         while(str_p < str_len){//-p-n-m-g
             char modify_type = str[str_p + 1];
             str_p += 3;

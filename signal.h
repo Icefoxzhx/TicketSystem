@@ -15,7 +15,7 @@ typedef hzstring<10> Signal;
 //user
 typedef hzstring<21> Userid;
 typedef hzstring<31> Password;
-typedef hzstring<12> Name;
+typedef hzstring<15> Name;
 typedef hzstring<31> Email;
 
 struct User{
