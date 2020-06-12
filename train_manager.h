@@ -11,8 +11,8 @@
 #include "Bptree.hpp"
 #include "hzstring.h"
 #include <fstream>
-#include "utility.hpp"
 /*
+#include "utility.hpp"
 #include "exceptions.hpp"
 #include "vector.hpp"
 #include "map.hpp"
