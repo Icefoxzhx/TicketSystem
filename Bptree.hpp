@@ -3,14 +3,8 @@
 #include <cstdio>
 #include <cstring>
 #include <functional>
-/*
-#include "utility.hpp"
-#include "exceptions.hpp"
-#include "vector.hpp"
- */
 #include <vector>
 //#define DEBUG
-#endif //TICKETSYSTEM_BPTREE_H
 using namespace std;
 template<class Key,class Value,class Compare=std::less<Key> >
 class Bptree{
@@ -19,8 +13,7 @@ class Bptree{
 	typedef pair<Key,off_t> entry;
 	typedef pair<Key,Value> pKV;
 	typedef char buffer[PAGE_SIZE];
-//	typedef sjtu::vector<pKV> find_list;
-    typedef vector<pKV> find_list;
+	typedef vector<pKV> find_list;
 	///rec 垃圾回收指针
 	off_t root,rec;
 	FILE *file;
@@ -40,12 +33,11 @@ class Bptree{
 		fread(&root,sizeof(off_t),1,file);
 		fread(&rec,sizeof(off_t),1,file);
 	}
-	void read_node(char *b,off_t pos){
-		//if(!file){puts("Error");exit(1);}
+	void read_node(char *b,const off_t& pos){
 		fseek(file,pos,SEEK_SET);
 		fread(b,PAGE_SIZE,1,file);
 	}
-	void save_node(char *b,off_t pos){
+	void save_node(char *b,const off_t& pos){
 		fseek(file,pos,SEEK_SET);
 		fwrite(b,PAGE_SIZE,1,file);
 		//ffulsh?
@@ -72,7 +64,6 @@ class Bptree{
 		bool IsLeaf;
 		off_t pos;//my address
 		off_t nxt;//next brother address
-		Bptree *bel;
 		int sz;
 		Node(bool _IsLeaf=0, off_t _pos=-1,off_t _nxt=-1,int _sz=0):
 		IsLeaf(_IsLeaf),pos(_pos),nxt(_nxt),sz(_sz){}
@@ -104,37 +95,37 @@ class Bptree{
 			}
 			return ++r;
 		}
-		find_t find(const Key &key){
+		find_t find(const Key &key,Bptree* bel){
 			int x=getIndex(key);
 			buffer p;
-			this->bel->read_node(p,sons[x]);//need buffer
+			bel->read_node(p,sons[x]);//need buffer
 			if(((Node*)p)->IsLeaf){
 				return ((LeafNode*)p)->find(key);
 			}else{
-				return ((NonleafNode*)p)->find(key);
+				return ((NonleafNode*)p)->find(key,bel);
 			}
 		}
-		find_list find(const Key &k1, const Key &k2){
+		find_list find(const Key &k1, const Key &k2,Bptree* bel){
 			int x=getIndex(k1);
 			buffer p;
-			this->bel->read_node(p,sons[x]);//need buffer
+			bel->read_node(p,sons[x]);//need buffer
 			if(((Node*)p)->IsLeaf){
-				return ((LeafNode*)p)->find(k1,k2);
+				return ((LeafNode*)p)->find(k1,k2,bel);
 			}else{
-				return ((NonleafNode*)p)->find(k1,k2);
+				return ((NonleafNode*)p)->find(k1,k2,bel);
 			}
 		}
-		bool set(const Key &key,const Value &val){
+		bool set(const Key &key,const Value &val,Bptree* bel){
 			int x=getIndex(key);
 			buffer p;
-			this->bel->read_node(p,sons[x]);//need buffer
+			bel->read_node(p,sons[x]);//need buffer
 			if(((Node*)p)->IsLeaf){
-				return ((LeafNode*)p)->set(key,val);
+				return ((LeafNode*)p)->set(key,val,bel);
 			}else{
-				return ((NonleafNode*)p)->set(key,val);
+				return ((NonleafNode*)p)->set(key,val,bel);
 			}
 		}
-		void merge(const NonleafNode &p){
+		void merge(const NonleafNode &p,Bptree* bel){
 			this->nxt=p.nxt;
 			for(int i=0;i<p.sz;++i){
 				this->keys[this->sz+i]=p.keys[i];
@@ -142,10 +133,10 @@ class Bptree{
 			}
 			this->sz+=p.sz;
 			this->sons[this->sz]=p.sons[p.sz];
-			this->bel->save_node((char*)this,this->pos);
-			this->bel->del_node(p.pos);
+			bel->save_node((char*)this,this->pos);
+			bel->del_node(p.pos);
 		}
-		void redistribute(NonleafNode &p,Key &key){
+		void redistribute(NonleafNode &p,Key &key,Bptree* bel){
 			int n=this->sz+p.sz;
 			Key* tmpk=new Key[n];
 			off_t* tmpv=new off_t[n+1];
@@ -171,15 +162,14 @@ class Bptree{
 				p.sons[i]=tmpv[this->sz+1+i];
 			}
 			p.sons[p.sz]=tmpv[n];
-			this->bel->save_node((char*)this,this->pos);
-			this->bel->save_node((char*)&p,p.pos);
+			bel->save_node((char*)this,this->pos);
+			bel->save_node((char*)&p,p.pos);
 			delete[] tmpk;
 			delete[] tmpv;
 		}
-		void split(Key &key,off_t &val){
+		void split(Key &key,off_t &val,Bptree* bel){
 			NonleafNode *q=new NonleafNode();
 			q->nxt=this->nxt;
-			q->bel=this->bel;
 			int nn=this->sz/2;
 			q->sz=this->sz-nn-1;
 			for(int i=nn+1;i<this->sz;++i){
@@ -187,7 +177,7 @@ class Bptree{
 				q->sons[i-nn-1]=this->sons[i];
 			}
 			q->sons[q->sz]=this->sons[this->sz];
-			this->bel->save_new_node((char*)q);
+			bel->save_new_node((char*)q);
 			this->nxt=q->pos;
 			this->sz=nn;
 			key=this->keys[nn];
@@ -195,17 +185,17 @@ class Bptree{
 			delete q;
 		}
 		///check whether to split and save the node info at father
-		bool insert(const Key &key,const Value &val){
+		bool insert(const Key &key,const Value &val,Bptree* bel){
 			int x=getIndex(key);
 			buffer p;
-			this->bel->read_node(p,sons[x]);//need buffer
+			bel->read_node(p,sons[x]);//need buffer
 			if(((Node*)p)->IsLeaf){
 				LeafNode pp=*(LeafNode*)p;
 				bool res=pp.insert(key,val);
 				if(!res) return false;
 				if(pp.sz>MAXNUM_L){
 					Key new_key;off_t new_son;
-					pp.split(new_key,new_son);
+					pp.split(new_key,new_son,bel);
 					for(int i=this->sz-1;i>=x;--i){
 						keys[i+1]=keys[i];
 						sons[i+2]=sons[i+1];
@@ -214,18 +204,18 @@ class Bptree{
 					sons[x+1]=new_son;
 					++this->sz;
 				}
-				this->bel->save_node((char*)&pp,pp.pos);
+				bel->save_node((char*)&pp,pp.pos);
 				return true;
 			}else{
 				NonleafNode pp=*(NonleafNode *)p;
 				int old_sz=pp.sz;
-				bool res=pp.insert(key,val);
+				bool res=pp.insert(key,val,bel);
 				if(!res) return false;
 				if(pp.sz==old_sz) return true;
 				if(pp.sz>MAXNUM_N){
 					Key new_key;
 					off_t new_son=-1;
-					pp.split(new_key,new_son);
+					pp.split(new_key,new_son,bel);
 					for(int i=this->sz-1;i>=x;--i){
 						keys[i+1]=keys[i];
 						sons[i+2]=sons[i+1];
@@ -234,28 +224,28 @@ class Bptree{
 					sons[x+1]=new_son;
 					++this->sz;
 				}
-				this->bel->save_node((char*)&pp,pp.pos);
+				bel->save_node((char*)&pp,pp.pos);
 				return true;
 			}
 		}
-		bool remove(const Key &key,bool &f){
+		bool remove(const Key &key,bool &f,Bptree* bel){
 			int x=getIndex(key);
 			buffer p;
-			this->bel->read_node(p,sons[x]);//need buffer
+			bel->read_node(p,sons[x]);//need buffer
 			if(((Node*)p)->IsLeaf){
 				LeafNode pp=*(LeafNode*)p;
 				bool res=pp.remove(key);
 				if(!res) return false;
 				if(pp.sz<MINNUM_L){
-					this->bel->read_node(p,sons[x==this->sz?x-1:x+1]);//need buffer
+					bel->read_node(p,sons[x==this->sz?x-1:x+1]);//need buffer
 					LeafNode q=*(LeafNode*)p;
 					f=true;//modified
 					///merge
 					if(q.sz+pp.sz<=MAXNUM_L){
 						if(x==this->sz){//q pp
-							q.merge(pp);
+							q.merge(pp,bel);
 						}else{//pp q
-							pp.merge(q);
+							pp.merge(q,bel);
 							for(int i=x;i<this->sz-1;++i)
 								keys[i]=keys[i+1];
 							for(int i=x+1;i<this->sz;++i)
@@ -266,22 +256,22 @@ class Bptree{
 					}
 					///redistribute
 					if(x==this->sz){//q pp
-						q.redistribute(pp,keys[this->sz-1]);
+						q.redistribute(pp,keys[this->sz-1],bel);
 					}else{//pp q
-						pp.redistribute(q,keys[x]);
+						pp.redistribute(q,keys[x],bel);
 					}
 					return true;
 				}
-				this->bel->save_node((char*)&pp,pp.pos);
+				bel->save_node((char*)&pp,pp.pos);
 				return true;
 			}else{
 				NonleafNode pp=*(NonleafNode *)p;
 				bool modified=false;
-				bool res=pp.remove(key,modified);
+				bool res=pp.remove(key,modified,bel);
 				if(!res) return false;
 				if(!modified) return true;
 				if(pp.sz<MINNUM_N){
-					this->bel->read_node(p,sons[x==this->sz?x-1:x+1]);//need buffer
+					bel->read_node(p,sons[x==this->sz?x-1:x+1]);//need buffer
 					NonleafNode q=*(NonleafNode*)p;
 					f=true;
 					if(x==this->sz) q.keys[q.sz++]=keys[this->sz-1];
@@ -289,9 +279,9 @@ class Bptree{
 					///merge
 					if(q.sz+pp.sz<=MAXNUM_N){
 						if(x==this->sz){//q pp
-							q.merge(pp);
+							q.merge(pp,bel);
 						}else{//pp q
-							pp.merge(q);
+							pp.merge(q,bel);
 							for(int i=x;i<this->sz-1;++i)
 								keys[i]=keys[i+1];
 							for(int i=x+1;i<this->sz;++i)
@@ -302,17 +292,17 @@ class Bptree{
 					}
 					///redistribute
 					if(x==this->sz){//q pp
-						q.redistribute(pp,keys[this->sz-1]);
+						q.redistribute(pp,keys[this->sz-1],bel);
 					}else{//pp q
-						pp.redistribute(q,keys[x]);
+						pp.redistribute(q,keys[x],bel);
 					}
 					return true;
 				}
-				this->bel->save_node((char*)&pp,pp.pos);
+				bel->save_node((char*)&pp,pp.pos);
 				return true;
 			}
 		}
-		void print(){
+		void print(Bptree* bel){
 			printf("pos: %ld\tsz: %d\tnxt: %ld\n",this->pos,this->sz,this->nxt);
 			for(int i=0;i<this->sz;++i)
 				printf("son: %ld\tkey: %d\t",sons[i],keys[i]);
@@ -320,7 +310,7 @@ class Bptree{
 			puts("");
 			for(int i=0;i<=this->sz;++i){
 				buffer p;
-				this->bel->read_node(p,sons[i]);//need buffer
+				bel->read_node(p,sons[i]);//need buffer
 				if(((Node*)p)->IsLeaf){
 					((LeafNode*)p)->print();
 				}else{
@@ -348,7 +338,7 @@ class Bptree{
 			if(x<this->sz&&keys[x]==key) return find_t(true,values[x]);
 			return find_t(false,Value());
 		}
-		find_list find(const Key &k1,const Key &k2){
+		find_list find(const Key &k1,const Key &k2,Bptree* bel){
 			int x=getIndex(k1);
 			buffer b;
 			LeafNode *p=this;
@@ -356,7 +346,7 @@ class Bptree{
 			while(1){
 				if(x==p->sz){
 					if(p->nxt==-1) break;
-					this->bel->read_node(b,p->nxt);
+					bel->read_node(b,p->nxt);
 					p=(LeafNode*)b;
 					x=0;
 				}
@@ -366,26 +356,26 @@ class Bptree{
 			}
 			return res;
 		}
-		bool set(const Key &key,const Value &val){
+		bool set(const Key &key,const Value &val,Bptree* bel){
 			int x=getIndex(key);
 			if(x<Node::sz&&keys[x]==key){
 				values[x]=val;
-				this->bel->save_node((char*)this,this->pos);
+				bel->save_node((char*)this,this->pos);
 				return true;
 			}
 			return false;
 		}
-		void merge(const LeafNode &p){
+		void merge(const LeafNode &p,Bptree* bel){
 			this->nxt=p.nxt;
 			for(int i=0;i<p.sz;++i){
 				this->keys[this->sz+i]=p.keys[i];
 				this->values[this->sz+i]=p.values[i];
 			}
 			this->sz+=p.sz;
-			this->bel->save_node((char*)this,this->pos);
-			this->bel->del_node(p.pos);
+			bel->save_node((char*)this,this->pos);
+			bel->del_node(p.pos);
 		}
-		void redistribute(LeafNode &p,Key &key){
+		void redistribute(LeafNode &p,Key &key,Bptree* bel){
 			int n=this->sz+p.sz;
 			Key* tmpk=new Key[n];
 			Value* tmpv=new Value[n];
@@ -407,22 +397,21 @@ class Bptree{
 				p.keys[i]=tmpk[this->sz+i];
 				p.values[i]=tmpv[this->sz+i];
 			}
-			this->bel->save_node((char*)this,this->pos);
-			this->bel->save_node((char*)&p,p.pos);
+			bel->save_node((char*)this,this->pos);
+			bel->save_node((char*)&p,p.pos);
 			delete[] tmpk;
 			delete[] tmpv;
 		}
-		void split(Key &key,off_t &val){
+		void split(Key &key,off_t &val,Bptree* bel){
 			LeafNode *q=new LeafNode();
 			q->nxt=this->nxt;
-			q->bel=this->bel;
 			int nn=this->sz>>1;
 			q->sz=this->sz-nn;
 			for(int i=nn;i<this->sz;++i){
 				q->keys[i-nn]=this->keys[i];
 				q->values[i-nn]=this->values[i];
 			}
-			this->bel->save_new_node((char*)q);
+			bel->save_new_node((char*)q);
 			this->nxt=q->pos;
 			this->sz=nn;
 			key=q->keys[0];
@@ -484,7 +473,7 @@ public:
 		if(((Node*)p)->IsLeaf){
 			return ((LeafNode*)p)->find(key);
 		}else{
-			return ((NonleafNode*)p)->find(key);
+			return ((NonleafNode*)p)->find(key,this);
 		}
 	}
 	find_list find(const Key &k1, const Key &k2){
@@ -492,9 +481,9 @@ public:
 		buffer p;
 		read_node(p,root);//need buffer
 		if(((Node*)p)->IsLeaf){
-			return ((LeafNode*)p)->find(k1,k2);
+			return ((LeafNode*)p)->find(k1,k2,this);
 		}else{
-			return ((NonleafNode*)p)->find(k1,k2);
+			return ((NonleafNode*)p)->find(k1,k2,this);
 		}
 	}
 	bool count(const Key &key){
@@ -504,7 +493,6 @@ public:
 	bool insert(const Key &key,const Value &val){
 		if(empty()){
 			LeafNode *p=new LeafNode();
-			p->bel=this;
 			p->insert(key,val);
 			save_new_node((char*)p);
 			root=p->pos;
@@ -520,9 +508,8 @@ public:
 			if(!res) return false;
 			if(pp.sz>MAXNUM_L){
 				Key new_key;off_t new_son;
-				pp.split(new_key,new_son);
+				pp.split(new_key,new_son,this);
 				NonleafNode *q=new NonleafNode();
-				q->bel=this;
 				q->sons[0]=pp.pos;
 				q->sons[1]=new_son;
 				q->keys[0]=new_key;
@@ -537,14 +524,13 @@ public:
 		}else{
 			NonleafNode pp=*(NonleafNode *)p;
 			int old_sz=pp.sz;
-			bool res=pp.insert(key,val);
+			bool res=pp.insert(key,val,this);
 			if(!res) return false;
 			if(pp.sz==old_sz) return true;
 			if(pp.sz>MAXNUM_N){
 				Key new_key;off_t new_son;
-				pp.split(new_key,new_son);
+				pp.split(new_key,new_son,this);
 				NonleafNode *q=new NonleafNode();
-				q->bel=this;
 				q->sons[0]=pp.pos;
 				q->sons[1]=new_son;
 				q->keys[0]=new_key;
@@ -577,7 +563,7 @@ public:
 		}else{
 			NonleafNode pp=*(NonleafNode *)p;
 			bool modified=false;
-			bool res=pp.remove(key,modified);
+			bool res=pp.remove(key,modified,this);
 			if(!res) return false;
 			if(!modified) return true;
 			if(pp.sz==0){
@@ -594,9 +580,9 @@ public:
 		buffer p;
 		read_node(p,root);//need buffer
 		if(((Node*)p)->IsLeaf){
-			return ((LeafNode*)p)->set(key,val);
+			return ((LeafNode*)p)->set(key,val,this);
 		}else{
-			return ((NonleafNode*)p)->set(key,val);
+			return ((NonleafNode*)p)->set(key,val,this);
 		}
 	}
 	void clear(){
@@ -612,7 +598,8 @@ public:
 		if(((Node*)p)->IsLeaf){
 			((LeafNode*)p)->print();
 		}else{
-			((NonleafNode*)p)->print();
+			((NonleafNode*)p)->print(this);
 		}
 	}
 };
+#endif //TICKETSYSTEM_BPTREE_H
