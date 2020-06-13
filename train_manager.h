@@ -596,8 +596,9 @@ public:
 
             Train tr = res.second;
             int start_sale_date = tr.sale_date/1000, end_sale_date = tr.sale_date%1000;
+            //if(start_sale_date > date || )
             int len = tr.station_num;
-            int l_query = tr.station_num - start_order + 1;
+            int l_query = tr.station_num - start_order;
 
             Station begin_station, tmp_station, start_station;
             rfile.seekg(tr.route_pos, std::ios::beg);
@@ -651,7 +652,7 @@ public:
             }
 
             int date_to_begin = date - (start_station.depart_time/1440-begin_station.depart_time/1440);
-            if(end_sale_date < date_to_begin) continue;
+            if(end_sale_date < date_to_begin) {++iter_start; continue;}
 
             int start_d = max(date, start_sale_date + (start_station.depart_time/1440-begin_station.depart_time/1440));
             int start_t = start_d*1440 + start_station.depart_time%1440;
@@ -1149,6 +1150,7 @@ public:
         Signal _z;
         is >> _z >> _c >> _z >> _u;
 
+        if(!user_login[_c]) {os << "-1\n"; return;}
         find_t_user res_cur = user_record.find(_c);
         if(!res_cur.first) {os << "-1\n"; return;}
         find_t_user res_query = user_record.find(_u);
@@ -1161,7 +1163,6 @@ public:
 
         ufile.seekg(user_pos_query, std::ios::beg);
         ufile.read(reinterpret_cast<char*> (&user_query), sizeof(User));
-        if(!user_login[user_cur.user_id]) {os << "-1\n"; return;}
         if(user_cur.privilege <= user_query.privilege && _c != _u) {os << "-1\n"; return;}
 
         os << user_query.user_id << " " << user_query.name << " ";
@@ -1176,6 +1177,7 @@ public:
         is >> _z >> _c >> _z >> _u;
         is.getline(str,500);
 
+        if(!user_login[_c]) {os << "-1\n"; return;}
         find_t_user res_cur = user_record.find(_c);
         if(!res_cur.first) {os << "-1\n"; return;}
         find_t_user res_query = user_record.find(_u);
@@ -1189,7 +1191,6 @@ public:
         ufile.seekg(user_pos_query, std::ios::beg);
         ufile.read(reinterpret_cast<char*> (&user_query), sizeof(User));
 
-        if(!user_login[_c]) {os << "-1\n"; return;}
         if(user_cur.privilege < user_query.privilege ||
         (user_cur.privilege == user_query.privilege && _c != _u)) {os << "-1\n"; return;}
 
