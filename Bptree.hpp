@@ -85,6 +85,7 @@ class Bptree{
 	struct NonleafNode:public Node{
 		Key keys[MAXNUM_N+1];
 		off_t sons[MAXNUM_N+2];
+		NonleafNode():Node(){}
 		///find the least x so that key[x]>key
 		int getIndex(const Key &key){
 			int l=0,r=this->sz-1;
@@ -303,18 +304,19 @@ class Bptree{
 			}
 		}
 		void print(Bptree* bel){
+			puts("~~~~~~~~~~~~~~~~~~");
 			printf("pos: %ld\tsz: %d\tnxt: %ld\n",this->pos,this->sz,this->nxt);
 			for(int i=0;i<this->sz;++i)
-				printf("son: %ld\tkey: %d\t",sons[i],keys[i]);
-			printf("son: %ld\n",sons[this->sz]);
-			puts("");
+				cout<<sons[i]<<" "<<keys[i]<<" ";
+			cout<<sons[this->sz]<<endl;
+			puts("~~~~~~~~~~~~~~~~~~");
 			for(int i=0;i<=this->sz;++i){
 				buffer p;
 				bel->read_node(p,sons[i]);//need buffer
 				if(((Node*)p)->IsLeaf){
 					((LeafNode*)p)->print();
 				}else{
-					((NonleafNode*)p)->print();
+					((NonleafNode*)p)->print(bel);
 				}
 			}
 		}
@@ -392,6 +394,7 @@ class Bptree{
 				this->keys[i]=tmpk[i];
 				this->values[i]=tmpv[i];
 			}
+			key=tmpk[this->sz];
 			p.sz=n-this->sz;
 			for(int i=0;i<p.sz;++i){
 				p.keys[i]=tmpk[this->sz+i];
@@ -441,10 +444,12 @@ class Bptree{
 			return true;
 		}
 		void print(){
+			puts("~~~~~~~~~~~~~~~~~");
 			printf("pos: %ld\tsz: %d\tnxt: %ld\n",this->pos,this->sz,this->nxt);
 			for(int i=0;i<this->sz;++i)
-				printf("val: %d\tkey: %d\n",values[i],keys[i]);
-			puts("");
+				cout<<values[i]<<" "<<keys[i]<<" ";
+			cout<<endl;
+			puts("~~~~~~~~~~~~~~~~~");
 		}
 	};
 public:
