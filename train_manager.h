@@ -124,12 +124,19 @@ private:
     };
 
 
+    struct query_transfer_key{
+        Station_id station_id;
+        int num;
+        bool operator <(const query_transfer_key &rhs) const{return station_id < rhs.station_id || (station_id == rhs.station_id && num < rhs.num);}
+        bool operator ==(const query_transfer_key &rhs) const{return station_id == rhs.station_id && num == rhs.num;}
+    };
+
     struct query_transfer_t {
         Train_id train_id;
         int start_time, end_time, price, val, val_1, date_to_begin;
     };
 //    sjtu::map<Station_id, query_ticket_t> station_transfer;
-    map<Station_id, query_transfer_t> station_transfer;
+    map<query_transfer_key, query_transfer_t> station_transfer;
 
     std::fstream rfile;
     std::fstream tlfile;
@@ -708,8 +715,9 @@ public:
     }
 
     void query_transfer(std::istream &is, std::ostream &os){//-s -t -d (-p)////////////////
+       // std::cout<<"111111";
         get_variables(is,0,0,3,2,2);
-
+//std::cout<<"222222";
         int date = Date_to_int(_d);
         if(date < 0 || date >= MAX_DATE || _s_startstation == _t_endstation) {os <<"0\n"; return;}
 
@@ -720,7 +728,7 @@ public:
 
         Station_key end_key_1(_t_endstation, MIN_TRAIN_ID), end_key_2(_t_endstation, MAX_TRAIN_ID);
         find_t_v_station Tmp_end_station = station_record.find(end_key_1, end_key_2);
-//std::cout<<"-------------11111111111\n";
+
         if(!Tmp_start_station.size() || !Tmp_end_station.size()) {os<<"0\n";return;}
 
         auto iter_start = Tmp_start_station.begin(), iter_end = Tmp_end_station.begin();
@@ -728,6 +736,8 @@ public:
         int ans = -1, *tmp_tl = new int[105];
         Station_id trans_station_id;
         query_transfer_t ans1, ans2;
+
+     //   std::cout << Tmp_start_station.size()<<" "<<Tmp_end_station.size()<<"  ";
 
         while(iter_start != Tmp_start_station.end()){
             Train_id id_1 = (*iter_start).first.train_id;
@@ -737,8 +747,7 @@ public:
 
             Train tr = res.second;
             int start_sale_date = tr.sale_date/1000, end_sale_date = tr.sale_date%1000;
-            /////////////////////////////
-            if (start_sale_date > date) {++iter_start; continue;}
+
             int len = tr.station_num;
             int l_query = tr.station_num - start_order;
 
@@ -748,51 +757,6 @@ public:
             rfile.seekg(tr.route_pos + sizeof(Station) * start_order, std::ios::beg);
             rfile.read(reinterpret_cast<char*> (all_station), sizeof(Station) * l_query);
             start_station = all_station[0];
-
-            //--whether pass the end_station--
-            int end_order = -1;
-            for(int i = 1;i < l_query;++i){
-                if(all_station[i].station_id == _t_endstation){
-                    end_order = i; break;
-                }
-            }
-            if(end_order != -1){
-                Station end_station = all_station[end_order];
-                for(int i = 1;i < end_order;++i){
-                    tmp_station = all_station[i];
-                    if(station_transfer.find(tmp_station.station_id) != station_transfer.end()){
-                        query_transfer_t tmp_trans_ticket = station_transfer[tmp_station.station_id];
-                        int tmp_val = tmp_trans_ticket.val;
-                        //attention date
-                        int arr_t = tmp_trans_ticket.end_time;
-                        int arr_d = arr_t / 1440; arr_t %= 1440;
-                        int dep_d = arr_d;
-                        if(tmp_station.depart_time%1440 < arr_t) dep_d++;
-
-                        if(end_sale_date < dep_d - (tmp_station.depart_time/1440-begin_station.depart_time/1440))
-                            continue;
-
-                        dep_d = max(dep_d, start_sale_date + (tmp_station.depart_time/1440-begin_station.depart_time/1440));
-                        int dep_t = dep_d*1440 + tmp_station.depart_time % 1440;
-
-                        if(_p_timeorcost) tmp_val += end_station.price - tmp_station.price;//cost
-                        else tmp_val = end_station.arrive_time - tmp_station.depart_time + dep_t;
-
-                        if(ans == -1 || tmp_val < ans || (tmp_val == ans &&
-                        tmp_trans_ticket.end_time- tmp_trans_ticket.start_time < ans1.end_time- ans1.start_time)){
-                            ans = tmp_val;
-                            trans_station_id = tmp_station.station_id;
-                            ans1 = tmp_trans_ticket;
-                            //HAPPY_TRAIN 中院 08-17 05:24 -> 下院 08-17 15:24 514 1000
-                            ans2.train_id = tr.train_id;
-                            ans2.start_time = dep_t;
-                            ans2.end_time = dep_t + end_station.arrive_time - tmp_station.depart_time;
-                            ans2.price = end_station.price - tmp_station.price;
-                            ans2.date_to_begin = dep_d - (tmp_station.depart_time/1440-begin_station.depart_time/1440);
-                       }
-                    }
-                }
-            }
 
             int date_to_begin = date - (start_station.depart_time/1440-begin_station.depart_time/1440);
             if(end_sale_date < date_to_begin || start_sale_date > date_to_begin) {++iter_start; continue;}
@@ -806,32 +770,32 @@ public:
                 if(_p_timeorcost) tmp_val = tmp_station.price - start_station.price;//cost
                 else tmp_val = start_t;//time;
 
-                bool flag = 0;
-                if(station_transfer.find(tmp_station.station_id) == station_transfer.end())
-                    flag = 1;
-                else{
-                    query_transfer_t tmp_trans_last = station_transfer[tmp_station.station_id];
-                    if(tmp_val < tmp_trans_last.val ||
-                      (tmp_val == tmp_trans_last.val && tr.train_id < tmp_trans_last.train_id) )
-                        flag = 1;
+                query_transfer_key tmp_transfer_key;
+                tmp_transfer_key.station_id = tmp_station.station_id;
+                tmp_transfer_key.num = 1;
+                auto tmp_iter = station_transfer.find(tmp_transfer_key);
+
+                int tmp_station_size = 1;
+                while(tmp_iter != station_transfer.end()){
+                    std::cout<<tmp_station_size<<" ";
+                    if((*tmp_iter).first.station_id != tmp_station.station_id) break;
+                    tmp_station_size++; ++tmp_iter;
                 }
 
-                if(flag){
-                    query_transfer_t tmp_trans_ticket;
-                    tmp_trans_ticket.val = tmp_val;
-                    tmp_trans_ticket.start_time = start_t;
-                    tmp_trans_ticket.end_time = tmp_station.arrive_time - start_station.depart_time + start_t;
-                    tmp_trans_ticket.train_id = tr.train_id;
-                    tmp_trans_ticket.price = tmp_station.price - start_station.price;
-                    tmp_trans_ticket.date_to_begin = start_d - (start_station.depart_time/1440-begin_station.depart_time/1440);
-                    station_transfer[tmp_station.station_id] = tmp_trans_ticket;
-                }
+                tmp_transfer_key.num = tmp_station_size;
+                query_transfer_t tmp_trans_ticket;
+                tmp_trans_ticket.val = tmp_val;
+                tmp_trans_ticket.start_time = start_t;
+                tmp_trans_ticket.end_time = tmp_station.arrive_time - start_station.depart_time + start_t;
+                tmp_trans_ticket.train_id = tr.train_id;
+                tmp_trans_ticket.price = tmp_station.price - start_station.price;
+                tmp_trans_ticket.date_to_begin = start_d - (start_station.depart_time/1440-begin_station.depart_time/1440);
+                station_transfer[tmp_transfer_key] = tmp_trans_ticket;
             }
             ++iter_start;
         }
 
-
-
+//std::cout<<"111 ";
         while(iter_end != Tmp_end_station.end()){
             Train_id id_1 = (*iter_end).first.train_id;
             int end_order = (*iter_end).second;
@@ -850,10 +814,18 @@ public:
 
             for(int i = 0;i < end_order;++i){
                 tmp_station = all_station[i];
-                if(station_transfer.find(tmp_station.station_id) != station_transfer.end()){
-                    query_transfer_t tmp_trans_ticket = station_transfer[tmp_station.station_id];
-                    if(tmp_trans_ticket.train_id == tr.train_id) continue;
 
+                query_transfer_key tmp_transfer_key;
+                tmp_transfer_key.station_id = tmp_station.station_id;
+                tmp_transfer_key.num = 1;
+                auto tmp_iter = station_transfer.lower_bound(tmp_transfer_key);
+
+                while(tmp_iter != station_transfer.end()){
+                    if((*tmp_iter).first.station_id != tmp_station.station_id) break;
+
+                    query_transfer_t tmp_trans_ticket = (*tmp_iter).second;
+                    if(tmp_trans_ticket.train_id == tr.train_id) continue;
+//std::cout<<"222";
                     int tmp_val = tmp_trans_ticket.val;
                     //attention date
                     int arr_t = tmp_trans_ticket.end_time;
@@ -881,7 +853,10 @@ public:
                         ans2.price = end_station.price - tmp_station.price;
                         ans2.date_to_begin = dep_d - (tmp_station.depart_time/1440-begin_station.depart_time/1440);
                     }
+
+                    ++tmp_iter;
                 }
+
             }
             ++iter_end;
         }
