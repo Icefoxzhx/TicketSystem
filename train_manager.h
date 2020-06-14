@@ -776,7 +776,7 @@ public:
                         int dep_t = dep_d*1440 + tmp_station.depart_time % 1440;
 
                         if(_p_timeorcost) tmp_val += end_station.price - tmp_station.price;//cost
-                        else tmp_val = end_station.arrive_time - tmp_station.depart_time + dep_t - tmp_trans_ticket.start_time;
+                        else tmp_val = end_station.arrive_time - tmp_station.depart_time + dep_t;
 
                         if(ans == -1 || tmp_val < ans || (tmp_val == ans &&
                         tmp_trans_ticket.end_time- tmp_trans_ticket.start_time < ans1.end_time- ans1.start_time)){
@@ -804,7 +804,7 @@ public:
                 tmp_station = all_station[i];
                 int tmp_val;
                 if(_p_timeorcost) tmp_val = tmp_station.price - start_station.price;//cost
-                else tmp_val = tmp_station.arrive_time - start_station.depart_time;//time;
+                else tmp_val = start_t;//time;
 
                 bool flag = 0;
                 if(station_transfer.find(tmp_station.station_id) == station_transfer.end())
@@ -867,7 +867,7 @@ public:
                     int dep_t = dep_d*1440 + tmp_station.depart_time % 1440;
 
                     if(_p_timeorcost) tmp_val += end_station.price - tmp_station.price;//cost
-                    else tmp_val = end_station.arrive_time - tmp_station.depart_time + dep_t - tmp_trans_ticket.start_time;
+                    else tmp_val = end_station.arrive_time - tmp_station.depart_time + dep_t;
 
                     if(ans == -1 || tmp_val < ans || (tmp_val == ans &&
                     tmp_trans_ticket.end_time - tmp_trans_ticket.start_time < ans1.end_time - ans1.start_time)){
