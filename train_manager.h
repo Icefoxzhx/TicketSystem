@@ -812,13 +812,12 @@ public:
                     if(end_pos != -1){// start_station -> tmp_station(_2) -> end_station
                         Station end_station = end_station_arr[end_station_ed[j]];
                         Station tmp_station_2 = end_station_arr[end_pos];
-                        //std::cout<<"["<<end_station_trainid[j]<<","<<tmp_station_2.station_id<<"]";
 
                         int arr_t = start_t + tmp_station.arrive_time - start_station.depart_time;
                         int dep_d = arr_t/1440;
                         if(arr_t%1440 > tmp_station_2.depart_time%1440) dep_d++;
                         if(dep_d - (tmp_station_2.depart_time/1440-begin_station_2.depart_time/1440) > end_station_saledate[j]%1000) continue;
-                        dep_d = max(dep_d, end_station_saledate[j]/1000);
+                        dep_d = max(dep_d, end_station_saledate[j]/1000 + (tmp_station_2.depart_time/1440-begin_station_2.depart_time/1440));
                         int dep_t = dep_d*1440 + tmp_station_2.depart_time%1440;
 
                         int arr_t_end_station = dep_t + end_station.arrive_time - tmp_station_2.depart_time;
@@ -831,6 +830,7 @@ public:
                                                                   start_ticket.end_time - start_ticket.start_time < ans1.end_time - ans1.start_time)){
                             ans_val = tmp_val;
                             ans1 = start_ticket;
+                            trans_station_id = tmp_station.station_id;
                             ans2.train_id = end_station_trainid[j];
                             ans2.start_time = dep_t;
                             ans2.end_time = arr_t_end_station;
@@ -843,13 +843,11 @@ public:
             ++iter_start;
         }
 
-        if(ans_val == -1) {
-            os <<"0\n";
-            delete[] all_station; delete[] end_station_arr;
-            delete[] end_station_st; delete[] end_station_ed; delete[] end_station_saledate;
-            delete[] end_station_trainid;
-            return;
-        }
+        delete[] all_station; delete[] end_station_arr;
+        delete[] end_station_st; delete[] end_station_ed; delete[] end_station_saledate;
+        delete[] end_station_trainid;
+
+        if(ans_val == -1) {os <<"0\n"; return;}
 
         //---ans1---
         int *tmp_tl = new int[105];
@@ -896,9 +894,7 @@ public:
         os << int_to_Date(ans2.end_time/1440) << " " << int_to_Time(ans2.end_time%1440) << " ";
         os << ans2.price << " " << tmp_seat_left << "\n";
 
-        delete[] tmp_tl; delete[] all_station; delete[] end_station_arr;
-        delete[] end_station_st; delete[] end_station_ed; delete[] end_station_saledate;
-        delete[] end_station_trainid;
+        delete[] tmp_tl;
         return;
     }
 
