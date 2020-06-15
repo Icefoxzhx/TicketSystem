@@ -124,19 +124,12 @@ private:
     };
 
 
-    struct query_transfer_key{
-        Station_id station_id;
-        int num;
-        bool operator <(const query_transfer_key &rhs) const{return station_id < rhs.station_id || (station_id == rhs.station_id && num < rhs.num);}
-        bool operator ==(const query_transfer_key &rhs) const{return station_id == rhs.station_id && num == rhs.num;}
-    };
-
     struct query_transfer_t {
         Train_id train_id;
-        int start_time, end_time, price, date_to_begin;
+        int start_time, end_time, price, val, val_1, date_to_begin;
     };
 //    sjtu::map<Station_id, query_ticket_t> station_transfer;
-//    map<query_transfer_key, query_transfer_t> station_transfer;
+    map<Station_id, query_transfer_t> station_transfer;
 
     std::fstream rfile;
     std::fstream tlfile;
@@ -224,15 +217,15 @@ private:
     int  _g, _m_seatnum, _n_station_num, _n_ticket_num, _n_order;
     bool _p_timeorcost, _q;//false == time   true == cost
     bool f_p_password, f_n_name, f_m_email, f_g;
-//    char *_o = nullptr, *_p_price = nullptr, *_s_stations = nullptr, *_t_traveltime = nullptr, _d[15];
-    //_o 600 / _p_price 800 / _s_stations 3500 / _t_traveltime 600
+    //char *_o = nullptr, *_p_price = nullptr, *_s_stations = nullptr, *_t_traveltime = nullptr, _d[15];
     char _o[600], _p_price[800], _s_stations[3500], _t_traveltime[600], _d[15];
+    //_o 600 / _p_price 800 / _s_stations 3500 / _t_traveltime 600
+
 
     void get_variables(std::istream &is, int m_type, int n_type, int p_type, int s_type, int t_type){
         f_p_password = false ; f_n_name = false; f_m_email = false; f_g = false;
         _p_timeorcost=false; _q=false; _n_order = 1;
-     //   char *tmp_str = new char[35000];
-        char tmp_str[35000];
+        char *tmp_str = new char[35000];
         is.getline(tmp_str, 35000);
 
         int str_pos = 0, str_len = strlen(tmp_str);
@@ -305,7 +298,7 @@ private:
                 }
             }
             else if(str_type == 'o'){
-                //_o = new char[600];
+               // _o = new char[600];
                 for(;str_pos < str_len && tmp_str[str_pos] != ' ';str_pos++, t_pos++)
                     _o[t_pos] = tmp_str[str_pos];
                 _o[t_pos] = '\0';
@@ -318,7 +311,7 @@ private:
                     _p_password[t_pos] = '\0';
                 }
                 else if(p_type == 2){//prices
-                   // _p_price = new char[800];
+                  //  _p_price = new char[800];
                     for(;str_pos < str_len && tmp_str[str_pos] != ' ';str_pos++, t_pos++)
                         _p_price[t_pos] = tmp_str[str_pos];
                     _p_price[t_pos] = '\0';
@@ -336,7 +329,7 @@ private:
             }
             else if(str_type == 's'){
                 if(s_type == 1){//stations
-                  //  _s_stations = new char [3500];
+                 //   _s_stations = new char [3500];
                     for(;str_pos < str_len && tmp_str[str_pos] != ' ';str_pos++, t_pos++)
                         _s_stations[t_pos] = tmp_str[str_pos];
                     _s_stations[t_pos] = '\0';
@@ -377,7 +370,7 @@ private:
             while(str_pos < str_len && tmp_str[str_pos] == ' ') str_pos++;
         }
         //std::cout<<")";
-       // delete[]tmp_str;
+        delete[]tmp_str;
     }
 
 public:
@@ -716,8 +709,10 @@ public:
     }
 
     void query_transfer(std::istream &is, std::ostream &os){//-s -t -d (-p)////////////////
- //       std::cout<<"--aa--";
+        //       std::cout<<"--aa--";
         get_variables(is,0,0,3,2,2);
+
+
         int date = Date_to_int(_d);
         if(date < 0 || date >= MAX_DATE || _s_startstation == _t_endstation) {os <<"0\n"; return;}
 //std::cout<<"---bb---";
@@ -765,7 +760,7 @@ public:
             end_station_st[ed_st_num] = end_station_pos;
             rfile.seekg(tr.route_pos, std::ios::beg);
 //            rfile.read(reinterpret_cast<char*> (end_station_arr+sizeof(Station)*ed_st_num), sizeof(Station)*l_query);
-            rfile.read(reinterpret_cast<char*> (&all_station), sizeof(Station) * l_query);
+            rfile.read(reinterpret_cast<char*> (all_station), sizeof(Station) * l_query);
             for(int i = 0;i < l_query;++i) end_station_arr[end_station_pos++] = all_station[i];
 
 //            ed_st_num += l_query;
@@ -777,11 +772,8 @@ public:
         if(!ed_st_num) {
             os <<"0\n";
             delete[] tmp_tl;
-            //delete[] all_station;
+            delete[] all_station;
             delete[] end_station_arr;
-            //delete[] end_station_st; delete[] end_station_ed;
-            //delete[] end_station_trainid;
-            //delete [] end_station_saledate;
             return;
         }
 
@@ -803,7 +795,7 @@ public:
             rfile.seekg(tr.route_pos, std::ios::beg);
             rfile.read(reinterpret_cast<char*> (&begin_station), sizeof(Station));
             rfile.seekg(tr.route_pos + sizeof(Station) * start_order, std::ios::beg);
-            rfile.read(reinterpret_cast<char*> (&all_station), sizeof(Station) * l_query);
+            rfile.read(reinterpret_cast<char*> (all_station), sizeof(Station) * l_query);
             start_station = all_station[0];
 
             int date_to_begin = date - (start_station.depart_time/1440-begin_station.depart_time/1440);
@@ -971,17 +963,13 @@ public:
             }
             ++iter_start;
         }
-
 */
+
         if(ans_val == -1) {
             os <<"0\n";
             delete[] tmp_tl;
             delete[] all_station;
             delete [] end_station_arr;
-            //delete[] all_station_2;
-           // delete[] end_station_st; delete[] end_station_ed;
-            //delete[] end_station_trainid;
-            //delete [] end_station_saledate;
             return;
         }
 
@@ -1031,11 +1019,9 @@ public:
 
         delete[] tmp_tl;
         delete[] all_station;delete[] end_station_arr;
-        //delete[] end_station_st; delete[] end_station_ed;
-        //delete[] end_station_trainid;
-        //delete [] end_station_saledate;
         return;
     }
+
 
     void buy_ticket(std::istream &is, std::ostream &os){//-u -i -d -n -f -t (-q false)
     //<username>为-u的用户购买：<trainID>为-i，日期为-d，从站-f到站-t的车票-n张。

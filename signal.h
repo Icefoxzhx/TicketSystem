@@ -55,22 +55,6 @@ struct Train{
 struct Station{
     Station_id station_id;
     int arrive_time, depart_time, price;
-
-    Station(){}
-
-    Station(const Station &rhs){
-        station_id = rhs.station_id; arrive_time = rhs.arrive_time;
-        depart_time = rhs.depart_time; price = rhs.price;
-    }
-
-    Station operator=(const Station &rhs){
-        if((&rhs) == this) return *this;
-        station_id = rhs.station_id; arrive_time = rhs.arrive_time;
-        depart_time = rhs.depart_time; price = rhs.price;
-        return *this;
-    }
-
-
 };
 
 
