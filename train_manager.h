@@ -728,7 +728,7 @@ public:
         int *start_station_st = nullptr, *start_station_ed = nullptr, *start_begin_dpt = nullptr;
         Train_id *start_station_trainid = nullptr;
 
-        if(Tmp_start_size < 500) {
+        if(Tmp_start_size < 200) {
             int Least_size = Tmp_start_size * 101;
             start_station_arr = new Station[Least_size];
             start_station_st = new int[Tmp_start_size + 5];
@@ -745,7 +745,7 @@ public:
         int start_station_pos = 0, start_st_num = 0;
        // std::cout<<"---=---"<<Tmp_start_size;
 
-        if(Tmp_start_size < 500) {
+        if(Tmp_start_size < 200) {
             while (iter_start != Tmp_start_station.end()) {
                 Train_id id_1 = (*iter_start).first.train_id;
                 int start_order = (*iter_start).second;
@@ -785,7 +785,7 @@ public:
         }
 
 
-        if(Tmp_start_size < 500 && !start_st_num) {
+        if(Tmp_start_size < 200 && !start_st_num) {
             os << "0\n";
             delete[] all_station;
             delete[] all_station_2;
@@ -820,7 +820,7 @@ public:
                 end_ticket.price = end_station.price - tmp_station_2.price;
 
 
-                if(Tmp_start_size < 500) {
+                if(Tmp_start_size < 200) {
                     for (int j = 0; j < start_st_num; ++j) {
                         int start_pos = -1;
                         if (tr.train_id == start_station_trainid[j]) continue;
@@ -958,7 +958,7 @@ public:
         delete[] all_station;
         delete[] all_station_2;
 
-        if(Tmp_start_size < 100) {
+        if(Tmp_start_size < 200) {
             delete[] start_station_arr;
             delete[] start_station_st;
             delete[] start_station_ed;
