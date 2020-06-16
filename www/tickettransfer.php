@@ -14,9 +14,10 @@ else
 {
     $commandd = "query_transfer -s $tickettransfer_start_station -t $tickettransfer_end_station -d $tickettransfer_date -p $sortt";
     $socket = socket_create(AF_INET,SOCK_STREAM,SOL_TCP);
-    socket_connect($socket,'127.0.0.1',8888);
+    socket_connect($socket,'123.57.252.230',8888);
     socket_write($socket, strlen($commandd).$commandd);
-    $res = socket_read($socket, 2048);
+    $tmp_res = socket_read($socket, 2048);
+    $res = substr($tmp_res, 4, substr($tmp_res, 0, 4));
     if($res == 0)
         echo "0";
     else

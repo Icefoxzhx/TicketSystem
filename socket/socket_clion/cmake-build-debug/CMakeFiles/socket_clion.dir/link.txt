@@ -1,3 +1,0 @@
-C:\Users\cong\AppData\Local\JetBrains\Toolbox\apps\CLion\ch-0\192.7142.39\bin\cmake\win\bin\cmake.exe -E remove -f CMakeFiles\socket_clion.dir/objects.a
-C:\PROGRA~2\Dev-Cpp\MinGW64\bin\ar.exe cr CMakeFiles\socket_clion.dir/objects.a @CMakeFiles\socket_clion.dir\objects1.rsp
-C:\PROGRA~2\Dev-Cpp\MinGW64\bin\G__~1.EXE -g   -Wl,--whole-archive CMakeFiles\socket_clion.dir/objects.a -Wl,--no-whole-archive  -o socket_clion.exe -Wl,--out-implib,libsocket_clion.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\socket_clion.dir\linklibs.rsp

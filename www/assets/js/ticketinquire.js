@@ -5,19 +5,23 @@ $(function(){
 	{
 		alert(response_text);
 		refresh_main_table();
-		if(response_text == "no")
+		if(response_text == "-1")
 		{
 			swal("Error!","未找到对应信息","error");
 			main_json = [];
+			$("#card_inquire").slideUp(2000);
+			ticketinquire_show_total();
 		}
 		else
 		{
-			$("#card_inquire").show();
+			$("#card_inquire").slideDown(2000);
 			raw_json = response_text;
 			main_json = JSON.parse(raw_json);
+			ticketinquire_show_total();
+			ticketinquire_write_table(main_json[0].total_num);
+			$("#card_inquire").slideDown(2000);
+			$("#ticketinquire_show_total").slideDown(2000);
 		}
-		ticketinquire_show_total();
-		ticketinquire_write_table(main_json[0].total_num);
 	 });
 });
 function refresh_main_table()

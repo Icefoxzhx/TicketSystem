@@ -10,27 +10,26 @@
     }
 	else
     {
-    	$_SESSION = array();
- 	 	if(isset($_COOKIE['PHPSESSID']))
- 	 	{
-    	 	$commandd = "logout -u ".$_COOKIE['username'];
-        	$socket = socket_create(AF_INET,SOCK_STREAM,SOL_TCP);
-        	socket_connect($socket,'127.0.0.1',8888);
-        	socket_write($socket, strlen($commandd).$commandd);
-        	$res = socket_read($socket, 2048);
-        	setcookie('PHPSESSID','',time()-3600);
-     		setcookie('username','',time()-3600);
-     		setcookie('privilege','',time()-3600);
-     	}
-     	session_destroy();
+    // 	$_SESSION = array();
+ 	 	// if(isset($_COOKIE['PHPSESSID']))
+ 	 	// {
+    // 	 	$commandd = "logout -u ".$_COOKIE['username'];
+    //     	$socket = socket_create(AF_INET,SOCK_STREAM,SOL_TCP);
+    //     	socket_connect($socket,'127.0.0.1',8888);
+    //     	socket_write($socket, strlen($commandd).$commandd);
+    //     	$res = socket_read($socket, 2048);
+    //     	setcookie('PHPSESSID','',time()-3600);
+    //  		setcookie('username','',time()-3600);
+    //  		setcookie('privilege','',time()-3600);
+    //  	}
         $commandd = "login -u $username -p $password";
         $socket = socket_create(AF_INET,SOCK_STREAM,SOL_TCP);
-        socket_connect($socket,'127.0.0.1',8888);
+        socket_connect($socket,'123.57.252.230',8888);
         socket_write($socket, strlen($commandd).$commandd);
-        $res = socket_read($socket, 2048);
-        // if ($res == '0')
-        // {
-            echo("<script>console.log('登录成功');</script>");
+        $tmp_res = socket_read($socket, 2048);
+        $res = substr($tmp_res, 4, substr($tmp_res, 0, 4));
+        if ($res == "0")
+        {
             ini_set('session.gc_maxlifetime', 3600);
             $expire = ini_get('session.gc_maxlifetime');
 			// if (empty($_COOKIE['PHPSESSID']))
@@ -56,12 +55,17 @@
  				$_SESSION['username'] = $username_cookie;
                 $_SESSION['privilege'] = $privilege;
  			}
-            header("location:index.html");
-        // }
-  //       else if($res == '1')
-  //       {
-		// 	echo "<script>alert('登录失败');history.back();</script>";
-		// }
+            echo "0";
+        }
+        else if($res == "-1")
+        {
+            echo "-1";
+        }
+        else
+        {
+            echo "-1";
+        }
+
     }
 
 ?>

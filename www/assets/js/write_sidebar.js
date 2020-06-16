@@ -29,7 +29,7 @@ sidebarele[0].innerHTML = '\
                 <li><a href="useradd.html"> 添加新用户 </a></li>\
         	</ul>\
         </li>\
-        <li><a href="logout.php"><i class="ti-close"></i> 注销 </a></li>\
+        <li><a href="logout.php"><i class="ti-power-off"></i> 注销 </a></li>\
         <li><a href="clean.php"><i class="ti-close"></i> 一键删库 </a></li>\
     </div>\
 </div>';

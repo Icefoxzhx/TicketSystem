@@ -11,7 +11,7 @@ else
 {
     $commandd = "query_order -u $username";
     $socket = socket_create(AF_INET,SOCK_STREAM,SOL_TCP);
-    socket_connect($socket,'127.0.0.1',8888);
+    socket_connect($socket,'123.57.252.230',8888);
     socket_write($socket, strlen($commandd).$commandd);
     $res = socket_read($socket, 2048);
     $array1 = explode("\n", $res); 

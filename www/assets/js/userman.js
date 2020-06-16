@@ -3,28 +3,29 @@ var main_json2 = [{"total_num" : 0}];
 $(function(){
 	$("#userman_inquire").ajaxForm(function(response_text)
 	{
-		alert(response_text);
 		refresh_main_table();
-		if(response_text == "no")
+		if(response_text == "-1")
 		{
 			main_json = [{"total_num": 0}];
 			main_json2 = [{"total_num": 0}];
-			$("#card_inquire").hide();
-			$("#card_query_order").hide();
-			$("#userman_query_order_total").hide();
+			$("#card_inquire").slideUp(500);
+			$("#card_query_order").slideUp(500);
+			$("#userman_query_order_total").slideUp(500);
+			userman_show_total();
+			userman_write_table(main_json[0].total_num);
 		}
 		else
 		{
-			$("#card_userman_total").show();
-			$("#card_inquire").show();
 			raw_json = response_text;
 			main_json = JSON.parse(raw_json);
 			t = main_json.length;
 			var fir = {"total_num" : t};
 			main_json.unshift(fir);
+			userman_show_total();
+			userman_write_table(main_json[0].total_num);
+			$("#card_userman_total").slideDown(500);
+			$("#card_inquire").slideDown(500);
 		}
-		userman_show_total();
-		userman_write_table(main_json[0].total_num);
 	 });
 });
 
@@ -32,12 +33,15 @@ $(function(){
 $(function(){
 	$("#modify_profile").ajaxForm(function(response_text)
 	{
-		$("#card_modify_profile").hide();
-		$("#card_inquire").hide();
-		$("#userman_total").hide();
-		$("#card_query_order").hide();
-		$("#userman_query_order_total").hide();
-		alert(response_text);
+		$("#card_modify_profile").slideUp(500);
+		$("#card_inquire").slideUp(500);
+		$("#userman_total").slideUp(500);
+		$("#card_query_order").slideUp(500);
+		$("#userman_query_order_total").slideUp(500);
+		if(response_text == "-1")
+			swal("Oops", "修改失败，可能是网络故障，请重试！", "error");
+		else
+			swal("Success", "信息修改成功！修改后的信息如下：\n“" + response_text +"”", "success");
 		var main_json = [{"total_num" : 0}];
 	});
 });
@@ -60,12 +64,12 @@ function refresh_query_order_table()
 
 function userman_show_total()
 {
-	$("#userman_total").show();
+	$("#userman_total").slideDown(500);
 	document.getElementById('userman_total').innerHTML = '总共查询到<b>' + main_json[0].total_num +'</b>名用户';
 }
 function userman_query_order_total()
 {
-	$("#userman_query_order_total").show();
+	$("#userman_query_order_total").slideDown(500);
 	document.getElementById('userman_query_order_total').innerHTML = '总共查询到<b>' + main_json2[0].total_num +'</b>笔订单';
 }
 
@@ -165,13 +169,16 @@ $(function(){
 	$("#userman_total").hide();
 	$("#card_query_order").hide();
 	$("#userman_query_ticket_total").hide();
+	$("#userman_query_order_total").hide();
 });
 
 
 
 function userman_choose(x)
 {
-	$("#card_modify_profile").show();
+	$("#card_modify_profile").slideDown(500);
+	$("#card_query_order").slideUp(500);
+	$("#userman_query_order_total").slideUp(500);
 	document.getElementById('modify_username').value = main_json[x].username;
 	document.getElementById('modify_name').value = main_json[x].name;
 	document.getElementById('modify_mailAddr').value = main_json[x].mailAddr;
@@ -181,6 +188,7 @@ function userman_choose(x)
 
 function ticket_query_order_function(x)
 {
+	$("#card_modify_profile").slideUp(500);
 	$.ajax({
         type: "POST",
         dataType: "json",

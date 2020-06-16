@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>登录 -12360火车票管理系统</title>
 <link rel="stylesheet" type="text/css" href="assets/login_css/style.css">
 <link rel="stylesheet" type="text/css" href="assets/login_css/body.css"> 
@@ -11,13 +13,13 @@
 <body>
 <div class="container">
 	<section id="content">
-		<form method="post" action="login.php">
+		<form id="login" method="post" action="login.php">
 			<h1>登录</h1>
 			<div>
-				<input type="text" placeholder="用户名" required="required" id="username" name="username">
+				<input type="text" placeholder="用户名" required="required" id="username" name="username" onkeyup="this.value=this.value.replace(/\s+/g,'')">
 			</div>
 			<div>
-				<input type="password" placeholder="密码" required="required" id="password" name="password">
+				<input type="password" placeholder="密码" required="required" id="password" name="password" onkeyup="this.value=this.value.replace(/\s+/g,'')">
 			</div>
 			 <div class="">
 				<span class="help-block u-errormessage" id="js-server-helpinfo">&nbsp;</span>
@@ -37,4 +39,8 @@
 	2020 © ACM Class. 
 </div>
 </body>
+<script src="assets/js/lib/jquery.min.js"></script>
+<script src="assets/js/lib/jquery.form.js"></script>
+<script src="assets/js/lib/sweetalert/sweetalert.min.js"></script>
+<script src="assets/js/login.js"></script>
 </html>

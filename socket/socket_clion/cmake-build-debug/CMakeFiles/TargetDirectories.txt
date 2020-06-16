@@ -1,3 +1,0 @@
-D:/socket_clion/cmake-build-debug/CMakeFiles/edit_cache.dir
-D:/socket_clion/cmake-build-debug/CMakeFiles/socket_clion.dir
-D:/socket_clion/cmake-build-debug/CMakeFiles/rebuild_cache.dir

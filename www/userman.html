@@ -105,7 +105,7 @@
                                     <input class="btn btn-primary btn-group-right" type="submit" value="开始查询">
                                 </div>
                             </form>
-                            <div id="userman_total"></div>
+                            <div id="userman_total" class="alert alert-light"></div>
                             <div class="card" id="card_inquire">
                                 <div class="bootstrap-data-table-panel">
                                     <div class="table-responsive">
@@ -125,7 +125,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div id="userman_query_order_total"></div>
+                            <div id="userman_query_order_total" class="alert alert-light"></div>
                             <div class="card" id="card_query_order">
                                 <div class="bootstrap-data-table-panel">
                                     <div class="table-responsive">
@@ -150,11 +150,16 @@
                             </div>
                              <div class="card" id="card_modify_profile">
                                 <form role="form" name="modify_profile" id="modify_profile" action="userman_modify_profile.php" method="post">
-                                	您要修改的用户是：<input class="form-control input-default" type="text" name="modify_username" id="modify_username" readonly="readonly">
-                                    将密码修改为(留空表示不修改)：<input class="form-control input-default" type="password" name="modify_password" id="modify_password">
-                                    将姓名修改为：<input class="form-control input-default" type="text" name="modify_name" id="modify_name">
-                                    将邮箱修改为：<input class="form-control input-default" type="text" name="modify_mailAddr" id="modify_mailAddr">
-                                    将优先权修改为：<input class="form-control input-default" type="text" name="modify_privilege" id="modify_privilege">
+                                    <label>您要修改的用户是：</label>
+                                    <input class="form-control input-default" type="text" name="modify_username" id="modify_username" readonly="readonly">
+                                    <label>将密码修改为(留空表示不修改)：</label>
+                                    <input class="form-control input-default" type="password" name="modify_password" id="modify_password">
+                                    <label>将姓名修改为：</label>
+                                    <input class="form-control input-default" type="text" name="modify_name" id="modify_name">
+                                    <label>将邮箱修改为：</label>
+                                    <input class="form-control input-default" type="text" name="modify_mailAddr" id="modify_mailAddr">
+                                    <label>将优先权修改为：</label>
+                                    <input class="form-control input-default" type="text" name="modify_privilege" id="modify_privilege">
                                     <button type="submit" class="btn btn-default">确认添加</button>
                                     <button type="reset" class="btn btn-default">清空</button>
                                 </form>
