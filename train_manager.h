@@ -15,9 +15,9 @@
 /*
 #include "utility.hpp"
 #include "exceptions.hpp"
-#include "vector.hpp"
-#include "map.hpp"
- */
+#include "vector.hpp"*/
+//#include "map.hpp"
+
 #include <vector>
 #include <map>
 #include <functional>
@@ -102,11 +102,11 @@ private:
     typedef pair<bool, Train> find_t_train;
     typedef pair<bool, int> find_t_station;
     typedef pair<bool, int> find_t_order;
-    /*
+/*
     typedef sjtu::vector<pair<Station_key,int> > find_t_v_station;
     typedef sjtu::vector<pair<Pending_key,int> > find_t_v_pending;
     typedef sjtu::vector<pair<Order_key,int> > find_t_v_order;
-     */
+    */
     typedef vector<pair<Station_key,int> > find_t_v_station;
     typedef vector<pair<Pending_key,int> > find_t_v_pending;
     typedef vector<pair<Order_key,int> > find_t_v_order;
@@ -725,50 +725,21 @@ public:
 
 
         auto iter_start = Tmp_start_station.begin(), iter_end = Tmp_end_station.begin();
-        int Tmp_end_size = Tmp_end_station.size();
-        int Least_size = Tmp_end_size*150;
+        int Tmp_start_size = Tmp_start_station.size();
+        int Least_size = Tmp_start_size*101;
         Station *all_station = new Station[105];
-        Station *end_station_arr = new Station[Least_size];
-        int *end_station_st = new int [Tmp_end_size+5], *end_station_ed = new int [Tmp_end_size+5];
-        int *end_station_saledate = new int [Tmp_end_size+5];
+        Station *start_station_arr = new Station[Least_size];
+        int *start_station_st = new int [Tmp_start_size+5], *start_station_ed = new int [Tmp_start_size+5];
+        int *start_begin_dpt = new int[Tmp_start_size+5];
 
-        Train_id *end_station_trainid = new Train_id [Tmp_end_size];
+
+        Train_id *start_station_trainid = new Train_id [Tmp_start_size];
+
         int ans_val = -1;
         Station_id trans_station_id;
         query_transfer_t ans1, ans2;
 
-        int end_station_pos = 0, ed_st_num = 0;
-        while(iter_end != Tmp_end_station.end()){
-            Train_id id_1 = (*iter_end).first.train_id;
-            int end_order = (*iter_end).second;
-            find_t_train res = train_record.find(id_1);
-            if(!res.first || !res.second.release) {++iter_end; continue;}
-
-            Train tr = res.second;
-            end_station_trainid[ed_st_num] = tr.train_id;
-            end_station_saledate[ed_st_num] = tr.sale_date;
-            int len = tr.station_num, l_query = end_order + 1;
-
-            end_station_st[ed_st_num] = end_station_pos;
-            rfile.seekg(tr.route_pos, std::ios::beg);
-            rfile.read(reinterpret_cast<char*> (all_station), sizeof(Station) * l_query);
-
-            for(int i = 0;i < l_query;++i) end_station_arr[end_station_pos++] = all_station[i];
-
-            end_station_ed[ed_st_num] = end_station_pos-1;
-            ed_st_num++;
-            ++iter_end;
-        }
-
-
-        if(!ed_st_num) {
-            os <<"0\n";
-            delete[] all_station; delete[] end_station_arr;
-            delete[] end_station_st; delete[] end_station_ed; delete[] end_station_saledate;
-            delete[] end_station_trainid;
-            return;
-        }
-
+        int start_station_pos = 0, start_st_num = 0;
         while(iter_start != Tmp_start_station.end()){
             Train_id id_1 = (*iter_start).first.train_id;
             int start_order = (*iter_start).second;
@@ -776,77 +747,110 @@ public:
             if(!res.first || !res.second.release) {++iter_start; continue;}
 
             Train tr = res.second;
-            int start_sale_date = tr.sale_date/1000, end_sale_date = tr.sale_date%1000;
             int len = tr.station_num;
-            int l_query = tr.station_num - start_order;
+            int l_query =  len - start_order;
 
-            Station begin_station, tmp_station, start_station;
+            Station begin_station, start_station;
             rfile.seekg(tr.route_pos, std::ios::beg);
             rfile.read(reinterpret_cast<char*> (&begin_station), sizeof(Station));
             rfile.seekg(tr.route_pos + sizeof(Station) * start_order, std::ios::beg);
+            rfile.read(reinterpret_cast<char*> (&start_station), sizeof(Station));
+            int start_dtb = date - (start_station.depart_time/1440 - begin_station.depart_time/1440);
+            if(start_dtb < tr.sale_date/1000 || start_dtb > tr.sale_date%1000) {++iter_start; continue;}
+
+            rfile.seekg(tr.route_pos + sizeof(Station) * start_order, std::ios::beg);
             rfile.read(reinterpret_cast<char*> (all_station), sizeof(Station) * l_query);
-            start_station = all_station[0];
 
-            int date_to_begin = date - (start_station.depart_time/1440-begin_station.depart_time/1440);
-            if(end_sale_date < date_to_begin || start_sale_date > date_to_begin) {++iter_start; continue;}
+            start_station_trainid[start_st_num] = tr.train_id;
+            start_station_st[start_st_num] = start_station_pos;
+            for(int i = 0;i < l_query;++i) start_station_arr[start_station_pos++] = all_station[i];
 
-            //std::cout<<"("<<tr.train_id<<")";
+            start_station_ed[start_st_num] = start_station_pos-1;
+            start_begin_dpt[start_st_num] = start_dtb;
+            start_st_num++;
+            ++iter_start;
+        }
 
-            int start_t = date*1440 + start_station.depart_time%1440;
-            for(int i = 1;i < l_query;++i) {
-                tmp_station = all_station[i];
-                query_transfer_t start_ticket;
-                start_ticket.start_time = start_t;
-                start_ticket.train_id = tr.train_id;
-                start_ticket.price = tmp_station.price - start_station.price;
-                start_ticket.end_time = start_t + tmp_station.arrive_time - start_station.depart_time;
-                start_ticket.date_to_begin = date_to_begin;
 
-                for(int j = 0;j < ed_st_num;++j){
-                    int end_pos = -1;
-                    if(tr.train_id == end_station_trainid[j]) continue;
-                    Station begin_station_2 = end_station_arr[end_station_st[j]];
-                    for(int k = end_station_st[j]; k < end_station_ed[j];++k)
-                        if(end_station_arr[k].station_id == tmp_station.station_id){
-                            end_pos = k; break;
+        if(!start_st_num) {
+            os <<"0\n";
+            delete[] all_station; delete[] start_station_arr;
+            delete[] start_station_st; delete[] start_station_ed;
+            delete[] start_station_trainid; delete[] start_begin_dpt;
+            return;
+        }
+
+        while(iter_end != Tmp_end_station.end()){
+            Train_id id_1 = (*iter_end).first.train_id;
+            int end_order = (*iter_end).second;
+            find_t_train res = train_record.find(id_1);
+            if(!res.first || !res.second.release) {++iter_end; continue;}
+
+            Train tr = res.second;
+            int start_sale_date = tr.sale_date/1000, end_sale_date = tr.sale_date%1000;
+            int l_query = end_order + 1;
+
+            Station begin_station_2, tmp_station_2, end_station;
+            rfile.seekg(tr.route_pos, std::ios::beg);
+            rfile.read(reinterpret_cast<char*> (all_station), sizeof(Station) * l_query);
+            begin_station_2 = all_station[0]; end_station = all_station[end_order];
+
+            for(int i = 0;i < end_order;++i) {
+                tmp_station_2 = all_station[i];
+                query_transfer_t end_ticket;
+                end_ticket.train_id = tr.train_id;
+                end_ticket.price = end_station.price - tmp_station_2.price;
+
+                for(int j = 0;j < start_st_num;++j){
+                    int start_pos = -1;
+                    if(tr.train_id == start_station_trainid[j]) continue;
+
+                    for(int k = start_station_st[j]+1; k <= start_station_ed[j];++k)
+                        if(start_station_arr[k].station_id == tmp_station_2.station_id){
+                            start_pos = k; break;
                         }
-                    if(end_pos != -1){// start_station -> tmp_station(_2) -> end_station
-                        Station end_station = end_station_arr[end_station_ed[j]];
-                        Station tmp_station_2 = end_station_arr[end_pos];
+                    if(start_pos != -1){// start_station -> tmp_station(_2) -> end_station
+                        Station start_station = start_station_arr[start_station_st[j]];
+                        Station tmp_station = start_station_arr[start_pos];
 
+                        int start_t = date*1440 + start_station.depart_time%1440;
                         int arr_t = start_t + tmp_station.arrive_time - start_station.depart_time;
+
                         int dep_d = arr_t/1440;
                         if(arr_t%1440 > tmp_station_2.depart_time%1440) dep_d++;
-                        if(dep_d - (tmp_station_2.depart_time/1440-begin_station_2.depart_time/1440) > end_station_saledate[j]%1000) continue;
-                        dep_d = max(dep_d, end_station_saledate[j]/1000 + (tmp_station_2.depart_time/1440-begin_station_2.depart_time/1440));
+                        if(dep_d - (tmp_station_2.depart_time/1440-begin_station_2.depart_time/1440) > end_sale_date) continue;
+                        dep_d = max(dep_d, start_sale_date + (tmp_station_2.depart_time/1440-begin_station_2.depart_time/1440));
                         int dep_t = dep_d*1440 + tmp_station_2.depart_time%1440;
 
                         int arr_t_end_station = dep_t + end_station.arrive_time - tmp_station_2.depart_time;
                         int tmp_val;
-                        if(_p_timeorcost) tmp_val = start_ticket.price + end_station.price - tmp_station_2.price;
-                        else tmp_val = arr_t_end_station - start_ticket.start_time;
+                        if(_p_timeorcost) tmp_val = tmp_station.price - start_station.price + end_ticket.price;
+                        else tmp_val = arr_t_end_station - start_t;
 
-                        Station begin_station = end_station_arr[end_station_st[j]];
                         if(ans_val == -1 || tmp_val < ans_val || (tmp_val == ans_val &&
-                                                                  start_ticket.end_time - start_ticket.start_time < ans1.end_time - ans1.start_time)){
+                          arr_t - start_t < ans1.end_time - ans1.start_time)){
                             ans_val = tmp_val;
-                            ans1 = start_ticket;
                             trans_station_id = tmp_station.station_id;
-                            ans2.train_id = end_station_trainid[j];
-                            ans2.start_time = dep_t;
-                            ans2.end_time = arr_t_end_station;
-                            ans2.price = end_station.price - tmp_station_2.price;
-                            ans2.date_to_begin = dep_d - (tmp_station_2.depart_time/1440 - begin_station_2.depart_time/1440);
+                            ans1.train_id = start_station_trainid[j];
+                            ans1.start_time = start_t;
+                            ans1.end_time = arr_t;
+                            ans1.price = tmp_station.price - start_station.price;
+                            ans1.date_to_begin = start_begin_dpt[j];
+
+                            end_ticket.start_time = dep_t;
+                            end_ticket.end_time = arr_t_end_station;
+                            end_ticket.date_to_begin = dep_d - (tmp_station_2.depart_time/1440 - begin_station_2.depart_time/1440);
+                            ans2 = end_ticket;
                         }
                     }
                 }
             }
-            ++iter_start;
+            ++iter_end;
         }
 
-        delete[] all_station; delete[] end_station_arr;
-        delete[] end_station_st; delete[] end_station_ed; delete[] end_station_saledate;
-        delete[] end_station_trainid;
+        delete[] all_station; delete[] start_station_arr;
+        delete[] start_station_st; delete[] start_station_ed;
+        delete[] start_station_trainid; delete[] start_begin_dpt;
 
         if(ans_val == -1) {os <<"0\n"; return;}
 
