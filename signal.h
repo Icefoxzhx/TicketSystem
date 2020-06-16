@@ -42,9 +42,7 @@ enum Ticket_status{ticket_success, ticket_pending, ticket_refund};
 struct Train{
     Train_id train_id;
     int station_num, seat_num, sale_date;
-
-    int route_pos, ticket_left_pos;
-
+    off_t route_pos, ticket_left_pos;
     int buy_num;
     char type;
     bool release;
