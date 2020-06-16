@@ -12,14 +12,14 @@
 #include "Bptree.hpp"
 #include "hzstring.h"
 #include <fstream>
-/*
+
 #include "utility.hpp"
 #include "exceptions.hpp"
-#include "vector.hpp"*/
-//#include "map.hpp"
+#include "vector.hpp"
+#include "map.hpp"
 
-#include <vector>
-#include <map>
+//#include <vector>
+//#include <map>
 #include <functional>
 
 class train_system{
@@ -34,7 +34,7 @@ private:
     Bptree<Userid, User_value> user_record;
     typedef pair<bool, User_value> find_t_user;
     //sjtu::map<Userid, bool> user_login;
-    map<Userid, bool> user_login;
+    sjtu::map<Userid, bool> user_login;
 
     std::fstream ufile;
 
@@ -103,15 +103,15 @@ private:
     typedef pair<bool, Train> find_t_train;
     typedef pair<bool, off_t> find_t_station;
     typedef pair<bool, off_t> find_t_order;
-/*
+
     typedef sjtu::vector<pair<Station_key,off_t> > find_t_v_station;
     typedef sjtu::vector<pair<Pending_key,off_t> > find_t_v_pending;
     typedef sjtu::vector<pair<Order_key,off_t> > find_t_v_order;
-    */
+    /*
     typedef vector<pair<Station_key,off_t> > find_t_v_station;
     typedef vector<pair<Pending_key,off_t> > find_t_v_pending;
     typedef vector<pair<Order_key,off_t> > find_t_v_order;
-
+*/
 
     struct query_ticket_t{
         Train_id train_id;
@@ -130,7 +130,7 @@ private:
         int start_time, end_time, price, date_to_begin;
     };
 //    sjtu::map<Station_id, query_ticket_t> station_transfer;
-    map<Station_id, query_transfer_t> station_transfer;
+    //map<Station_id, query_transfer_t> station_transfer;
 
     std::fstream rfile;
     std::fstream tlfile;
@@ -626,7 +626,7 @@ public:
         Station_key end_key_1(_t_endstation, MIN_TRAIN_ID), end_key_2(_t_endstation, MAX_TRAIN_ID);
         find_t_v_station Tmp_end_station = station_record.find(end_key_1, end_key_2);
 
-        vector<query_ticket_t> vec_train;
+        sjtu::vector<query_ticket_t> vec_train;
         auto iter_start = Tmp_start_station.begin();
         auto iter_end = Tmp_end_station.begin();
         int *tmp_tl = new int [105];
@@ -728,7 +728,7 @@ public:
         int *start_station_st = nullptr, *start_station_ed = nullptr, *start_begin_dpt = nullptr;
         Train_id *start_station_trainid = nullptr;
 
-        if(Tmp_start_size < 200) {
+        if(Tmp_start_size < 500) {
             int Least_size = Tmp_start_size * 101;
             start_station_arr = new Station[Least_size];
             start_station_st = new int[Tmp_start_size + 5];
@@ -745,7 +745,7 @@ public:
         int start_station_pos = 0, start_st_num = 0;
        // std::cout<<"---=---"<<Tmp_start_size;
 
-        if(Tmp_start_size < 200) {
+        if(Tmp_start_size < 500) {
             while (iter_start != Tmp_start_station.end()) {
                 Train_id id_1 = (*iter_start).first.train_id;
                 int start_order = (*iter_start).second;
@@ -785,7 +785,7 @@ public:
         }
 
 
-        if(Tmp_start_size < 200 && !start_st_num) {
+        if(Tmp_start_size < 500 && !start_st_num) {
             os << "0\n";
             delete[] all_station;
             delete[] all_station_2;
@@ -958,7 +958,7 @@ public:
         delete[] all_station;
         delete[] all_station_2;
 
-        if(Tmp_start_size < 200) {
+        if(Tmp_start_size < 100) {
             delete[] start_station_arr;
             delete[] start_station_st;
             delete[] start_station_ed;

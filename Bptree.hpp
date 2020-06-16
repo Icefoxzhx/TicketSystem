@@ -3,7 +3,10 @@
 #include <cstdio>
 #include <cstring>
 #include <functional>
-#include <vector>
+#include "exceptions.hpp"
+#include "utility.hpp"
+#include "vector.hpp"
+
 //#define DEBUG
 using namespace std;
 template<class Key,class Value,class Compare=std::less<Key> >
@@ -13,7 +16,7 @@ class Bptree{
 	typedef pair<Key,off_t> entry;
 	typedef pair<Key,Value> pKV;
 	typedef char buffer[PAGE_SIZE];
-	typedef vector<pKV> find_list;
+	typedef sjtu::vector<pKV> find_list;
 	///rec 垃圾回收指针
 	off_t root,rec;
 	FILE *file;
@@ -47,9 +50,6 @@ class Bptree{
 			((Node*)b)->pos=rec;
 			fseek(file,rec,SEEK_SET);
 			fread(&rec,sizeof(off_t),1,file);
-//			puts("~~~~~~~~~~~~~~~~~used");
-//			cout<<"used"<<filename<<rec<<endl;
-//			puts("~~~~~~~~~~~~~~~~~used");
 			fseek(file,-sizeof(off_t),SEEK_CUR);
 			fwrite(b,PAGE_SIZE,1,file);
 			return;
@@ -62,10 +62,6 @@ class Bptree{
 		fseek(file,pos,SEEK_SET);
 		fwrite(&rec,sizeof(off_t),1,file);
 		rec=pos;
-//		if(filename!="pending_record") return;
-//		puts("~~~~~~~~~~~~~~~~~del");
-//		cout<<"del"<<filename<<rec<<endl;
-//		puts("~~~~~~~~~~~~~~~~~del");
 	}
 	struct Node{
 		bool IsLeaf;
