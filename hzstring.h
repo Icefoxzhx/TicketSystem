@@ -76,6 +76,7 @@ public:
 
     bool operator ==(const hzstring &rhs) const{
         if(rhs == nullptr) return false;
+        if(ch[0] == '\0') return false;
         int l1, l2;
         l1 = strlen(ch);
         l2 = strlen(rhs.ch);

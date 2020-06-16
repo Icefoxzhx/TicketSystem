@@ -214,7 +214,7 @@ namespace sjtu {
             arr = new T* [v_capacity];
 
             for(int i = 0;i < v_size;++i) arr[i] = tmp[i];
-            for(int i = 0;i < v_capacity;++i) arr[i] = nullptr;
+            for(int i = v_size;i < v_capacity;++i) arr[i] = nullptr;
             delete[] tmp;
         }
 
@@ -311,7 +311,8 @@ namespace sjtu {
 
         void pop_back() {
             if(v_size == 0) throw container_is_empty();
-            else --v_size;
+            if(arr[v_size] != nullptr) delete arr[v_size];
+            --v_size;
         }
     };
 
