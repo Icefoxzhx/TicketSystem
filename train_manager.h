@@ -12,13 +12,13 @@
 #include "Bptree.hpp"
 #include "hzstring.h"
 #include <fstream>
-/*
+
 #include "utility.hpp"
 #include "exceptions.hpp"
 #include "vector.hpp"
-#include "map.hpp"
- */
-#include <vector>
+//#include "map.hpp"
+
+//#include <vector>
 #include <map>
 #include <functional>
 
@@ -102,15 +102,15 @@ private:
     typedef pair<bool, Train> find_t_train;
     typedef pair<bool, int> find_t_station;
     typedef pair<bool, int> find_t_order;
-    /*
+
     typedef sjtu::vector<pair<Station_key,int> > find_t_v_station;
     typedef sjtu::vector<pair<Pending_key,int> > find_t_v_pending;
     typedef sjtu::vector<pair<Order_key,int> > find_t_v_order;
-     */
+    /*
     typedef vector<pair<Station_key,int> > find_t_v_station;
     typedef vector<pair<Pending_key,int> > find_t_v_pending;
     typedef vector<pair<Order_key,int> > find_t_v_order;
-
+    */
 
     struct query_ticket_t{
         Train_id train_id;
@@ -629,7 +629,7 @@ public:
         Station_key end_key_1(_t_endstation, MIN_TRAIN_ID), end_key_2(_t_endstation, MAX_TRAIN_ID);
         find_t_v_station Tmp_end_station = station_record.find(end_key_1, end_key_2);
 
-        vector<query_ticket_t> vec_train;
+        sjtu::vector<query_ticket_t> vec_train;
         auto iter_start = Tmp_start_station.begin();
         auto iter_end = Tmp_end_station.begin();
         int *tmp_tl = new int [105];
