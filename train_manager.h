@@ -12,14 +12,10 @@
 #include "Bptree.hpp"
 #include "hzstring.h"
 #include <fstream>
-
 #include "utility.hpp"
 #include "exceptions.hpp"
 #include "vector.hpp"
 #include "map.hpp"
-
-//#include <vector>
-//#include <map>
 #include <functional>
 
 class train_system{
@@ -435,7 +431,7 @@ public:
 
         int p_s = 0, p_t = 0, p_o = 0;
         int l_s = strlen(_s_stations), l_t = strlen(_t_traveltime), l_o = strlen(_o), l_tmp = 0;
-        char tmp[500];
+        char tmp[200];
 
         //---station_id---
         for(int i = 0;i < len;++i) {
@@ -728,7 +724,7 @@ public:
         int *start_station_st = nullptr, *start_station_ed = nullptr, *start_begin_dpt = nullptr;
         Train_id *start_station_trainid = nullptr;
 
-        if(Tmp_start_size < 500) {
+        if(Tmp_start_size < 200) {
             int Least_size = Tmp_start_size * 101;
             start_station_arr = new Station[Least_size];
             start_station_st = new int[Tmp_start_size + 5];
@@ -745,7 +741,7 @@ public:
         int start_station_pos = 0, start_st_num = 0;
        // std::cout<<"---=---"<<Tmp_start_size;
 
-        if(Tmp_start_size < 500) {
+        if(Tmp_start_size < 200) {
             while (iter_start != Tmp_start_station.end()) {
                 Train_id id_1 = (*iter_start).first.train_id;
                 int start_order = (*iter_start).second;
@@ -785,7 +781,7 @@ public:
         }
 
 
-        if(Tmp_start_size < 500 && !start_st_num) {
+        if(Tmp_start_size < 200 && !start_st_num) {
             os << "0\n";
             delete[] all_station;
             delete[] all_station_2;
