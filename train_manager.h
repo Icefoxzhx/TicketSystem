@@ -431,7 +431,7 @@ public:
 
         int p_s = 0, p_t = 0, p_o = 0;
         int l_s = strlen(_s_stations), l_t = strlen(_t_traveltime), l_o = strlen(_o), l_tmp = 0;
-        char tmp[200];
+        char tmp[500];
 
         //---station_id---
         for(int i = 0;i < len;++i) {
