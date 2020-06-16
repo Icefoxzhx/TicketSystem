@@ -225,9 +225,9 @@ private:
     void get_variables(std::istream &is, int m_type, int n_type, int p_type, int s_type, int t_type){
         f_p_password = false ; f_n_name = false; f_m_email = false; f_g = false;
         _p_timeorcost=false; _q=false; _n_order = 1;
-        char *tmp_str = new char[50000];
+        char *tmp_str = new char[10000];
         //std::cout<<"startread";
-        is.getline(tmp_str, 50000);
+        is.getline(tmp_str, 10000);
 
         int str_pos = 0, str_len = strlen(tmp_str);
         //std::cout<<"(";
