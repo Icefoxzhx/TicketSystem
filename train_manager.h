@@ -225,8 +225,9 @@ private:
     void get_variables(std::istream &is, int m_type, int n_type, int p_type, int s_type, int t_type){
         f_p_password = false ; f_n_name = false; f_m_email = false; f_g = false;
         _p_timeorcost=false; _q=false; _n_order = 1;
-        char *tmp_str = new char[35000];
-        is.getline(tmp_str, 35000);
+        char *tmp_str = new char[50000];
+        //std::cout<<"startread";
+        is.getline(tmp_str, 50000);
 
         int str_pos = 0, str_len = strlen(tmp_str);
         //std::cout<<"(";
@@ -901,7 +902,9 @@ public:
 
     void buy_ticket(std::istream &is, std::ostream &os){//-u -i -d -n -f -t (-q false)
     //<username>为-u的用户购买：<trainID>为-i，日期为-d，从站-f到站-t的车票-n张。
+       // std::cout<<"buy_ticket";
         get_variables(is,0,3,0,0,2);
+        //std::cout<<"("<<_i<<")";
 
         int date = Date_to_int(_d);
         if(date < 0 || date >= MAX_DATE || _f == _t_endstation) {os << "-1\n";return;}
@@ -1281,6 +1284,7 @@ public:
 
         if(user_cur.privilege < user_query.privilege ||
         (user_cur.privilege == user_query.privilege && _c != _u)) {os << "-1\n"; return;}
+        if(f_g && _g >= user_cur.privilege) {os <<"-1\n"; return;}
 
         if(f_p_password) user_query.password = _p_password;
         if(f_n_name) user_query.name = _n_name;
