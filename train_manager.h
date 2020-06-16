@@ -954,7 +954,7 @@ public:
         delete[] all_station;
         delete[] all_station_2;
 
-        if(Tmp_start_size < 100) {
+        if(Tmp_start_size < 200) {
             delete[] start_station_arr;
             delete[] start_station_st;
             delete[] start_station_ed;
