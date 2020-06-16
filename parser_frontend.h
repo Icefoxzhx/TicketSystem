@@ -8,18 +8,20 @@
 #include <iostream>
 #include <cstring>
 #include <cstdio>
+#include <sstream>
 #include "signal.h"
 #include "train_manager.h"
 
 train_system Manager;
 
-
-void get_command(std::istream &is, std::ostream &os){
+stringstream is;
+stringstream os;
+void get_command_frontend(char *frontend_command_str, char *frontend_result_str)
+{
+	stringstream is(frontend_command_str);
     char command[50]="";
     while(is >> command){
         //user
-        //-----test-----
-        //os<<"command: " << command <<"--";
         //-----test-----
         if(strcmp(command, "add_user") == 0){// -c -u -p -n -m -g
             os << Manager.add_user(is) << '\n';
@@ -96,6 +98,11 @@ void get_command(std::istream &is, std::ostream &os){
             break;
         }
     }
+    strcpy(frontend_result_str, os.str().c_str());
+    is.clear();
+    is.str("");
+	os.clear();
+    os.str("");
 }
 
 #endif //INC_20200512_PARSER_H
