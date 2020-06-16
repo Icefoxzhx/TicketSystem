@@ -12,14 +12,14 @@
 #include "Bptree.hpp"
 #include "hzstring.h"
 #include <fstream>
-/*
+
 #include "utility.hpp"
 #include "exceptions.hpp"
-#include "vector.hpp"*/
-//#include "map.hpp"
+#include "vector.hpp"
+#include "map.hpp"
 
-#include <vector>
-#include <map>
+//#include <vector>
+//#include <map>
 #include <functional>
 
 class train_system{
@@ -34,7 +34,7 @@ private:
     Bptree<Userid, User_value> user_record;
     typedef pair<bool, User_value> find_t_user;
     //sjtu::map<Userid, bool> user_login;
-    map<Userid, bool> user_login;
+    sjtu::map<Userid, bool> user_login;
 
     std::fstream ufile;
 
@@ -103,15 +103,15 @@ private:
     typedef pair<bool, Train> find_t_train;
     typedef pair<bool, off_t> find_t_station;
     typedef pair<bool, off_t> find_t_order;
-/*
+
     typedef sjtu::vector<pair<Station_key,off_t> > find_t_v_station;
     typedef sjtu::vector<pair<Pending_key,off_t> > find_t_v_pending;
     typedef sjtu::vector<pair<Order_key,off_t> > find_t_v_order;
-    */
+    /*
     typedef vector<pair<Station_key,off_t> > find_t_v_station;
     typedef vector<pair<Pending_key,off_t> > find_t_v_pending;
     typedef vector<pair<Order_key,off_t> > find_t_v_order;
-
+*/
 
     struct query_ticket_t{
         Train_id train_id;
@@ -130,7 +130,7 @@ private:
         int start_time, end_time, price, date_to_begin;
     };
 //    sjtu::map<Station_id, query_ticket_t> station_transfer;
-    map<Station_id, query_transfer_t> station_transfer;
+    //map<Station_id, query_transfer_t> station_transfer;
 
     std::fstream rfile;
     std::fstream tlfile;
@@ -626,7 +626,7 @@ public:
         Station_key end_key_1(_t_endstation, MIN_TRAIN_ID), end_key_2(_t_endstation, MAX_TRAIN_ID);
         find_t_v_station Tmp_end_station = station_record.find(end_key_1, end_key_2);
 
-        vector<query_ticket_t> vec_train;
+        sjtu::vector<query_ticket_t> vec_train;
         auto iter_start = Tmp_start_station.begin();
         auto iter_end = Tmp_end_station.begin();
         int *tmp_tl = new int [105];
@@ -820,7 +820,7 @@ public:
                 end_ticket.price = end_station.price - tmp_station_2.price;
 
 
-                if(Tmp_start_size < 500) {
+                if(Tmp_start_size < 200) {
                     for (int j = 0; j < start_st_num; ++j) {
                         int start_pos = -1;
                         if (tr.train_id == start_station_trainid[j]) continue;

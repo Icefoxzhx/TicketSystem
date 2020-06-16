@@ -4,9 +4,10 @@
 #include <cstring>
 #include <functional>
 
-#include "utility.hpp"
 #include "exceptions.hpp"
+#include "utility.hpp"
 #include "vector.hpp"
+
 //#include <vector>
 //#define DEBUG
 using namespace std;
@@ -51,6 +52,9 @@ class Bptree{
 			((Node*)b)->pos=rec;
 			fseek(file,rec,SEEK_SET);
 			fread(&rec,sizeof(off_t),1,file);
+//			puts("~~~~~~~~~~~~~~~~~used");
+//			cout<<"used"<<filename<<rec<<endl;
+//			puts("~~~~~~~~~~~~~~~~~used");
 			fseek(file,-sizeof(off_t),SEEK_CUR);
 			fwrite(b,PAGE_SIZE,1,file);
 			return;
@@ -63,6 +67,10 @@ class Bptree{
 		fseek(file,pos,SEEK_SET);
 		fwrite(&rec,sizeof(off_t),1,file);
 		rec=pos;
+//		if(filename!="pending_record") return;
+//		puts("~~~~~~~~~~~~~~~~~del");
+//		cout<<"del"<<filename<<rec<<endl;
+//		puts("~~~~~~~~~~~~~~~~~del");
 	}
 	struct Node{
 		bool IsLeaf;
@@ -470,6 +478,7 @@ public:
 		}
 	}
 	~Bptree(){
+		save_info();
 		if(file) fclose(file);
 	};
 	bool empty(){
@@ -505,7 +514,7 @@ public:
 			p->insert(key,val);
 			save_new_node((char*)p);
 			root=p->pos;
-			save_info();
+//			save_info();
 			delete p;
 			return true;
 		}
@@ -525,7 +534,7 @@ public:
 				q->sz=1;
 				save_new_node((char*)q);
 				root=q->pos;
-				save_info();
+//				save_info();
 				delete q;
 			}
 			save_node((char*)&pp,pp.pos);
@@ -546,7 +555,7 @@ public:
 				q->sz=1;
 				save_new_node((char*)q);
 				root=q->pos;
-				save_info();
+//				save_info();
 				delete q;
 			}
 			save_node((char*)&pp,pp.pos);
@@ -565,7 +574,7 @@ public:
 			if(pp.sz==0){
 				del_node(pp.pos);
 				root=-1;
-				save_info();
+//				save_info();
 			}
 			else save_node((char*)&pp,pp.pos);
 			return true;
@@ -577,7 +586,7 @@ public:
 			if(!modified) return true;
 			if(pp.sz==0){
 				root=pp.sons[0];
-				save_info();
+//				save_info();
 				del_node(pp.pos);
 			}
 			else save_node((char*)&pp,pp.pos);
