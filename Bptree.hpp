@@ -7,7 +7,7 @@
 #include "utility.hpp"
 #include "vector.hpp"
 #include "alloc.hpp"
-#define DEBUG
+//#define DEBUG
 using namespace std;
 const int PAGE_SIZE=4096;
 template<class Key,class Value,class Compare=std::less<Key> >
