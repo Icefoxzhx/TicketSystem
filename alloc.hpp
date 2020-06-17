@@ -5,6 +5,7 @@
 using namespace std;
 typedef char buffer[4096];
 class filemanager{
+	//树高过高会gg！！！
 	const int N=150;
 	char filename[20];
 	FILE *file;
@@ -77,6 +78,8 @@ public:
 		if(p==tail) tail=tail->pre;
 		if(p->pre!=nullptr) p->pre->nxt=p->nxt;
 		if(p->nxt!=nullptr) p->nxt->pre=p->pre;
+		p->pre= nullptr;
+		p->nxt= nullptr;
 		head->pre=p;
 		p->nxt=head;
 		head=p;
@@ -151,7 +154,31 @@ public:
 	void del_node(off_t pos){
 		fseek(file,pos,SEEK_SET);
 		fwrite(&rec,sizeof(off_t),1,file);
+		node* p=mp[pos];
+		mp.erase(mp.find(pos));
 		rec=pos;
+		--sz;
+		if(!sz){
+			head=tail= nullptr;
+			delete p;
+			return;
+		}
+		if(p==head){
+			head=p->nxt;
+			head->pre= nullptr;
+			delete p;
+			return;
+		}
+		if(p==tail){
+			tail=p->pre;
+			tail->nxt=nullptr;
+			delete p;
+			return;
+		}
+		p->nxt->pre=p->pre;
+		p->pre->nxt=p->nxt;
+		delete p;
+		return;
 	}
 };
 #endif //CODE_ALLOC_HPP

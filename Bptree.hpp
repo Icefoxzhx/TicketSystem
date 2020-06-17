@@ -521,14 +521,16 @@ public:
 		file.clear();
 	}
 	void print(){
-		puts("---------------------");
-		if(empty()) return;
-		char *p=file.read_node(root);
-		if(((Node*)p)->IsLeaf){
-			((LeafNode*)p)->print();
-		}else{
-			((NonleafNode*)p)->print(this);
+		puts("-------------------------------");
+		if(!empty()){
+			char *p=file.read_node(root);
+			if(((Node*)p)->IsLeaf){
+				((LeafNode*)p)->print();
+			}else{
+				((NonleafNode*)p)->print(this);
+			}
 		}
+		puts("-------------------------------");
 	}
 };
 #endif //TICKETSYSTEM_BPTREE_H
