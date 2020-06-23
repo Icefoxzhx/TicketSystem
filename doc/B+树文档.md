@@ -69,3 +69,9 @@ void clear()
 ```cpp
 void print()
 ```
+
+# alloc文档
+
+基于LRU策略实现的缓冲池，用来优化B+树外存访问。
+
+缓冲池大小为定长150。
