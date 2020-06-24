@@ -195,21 +195,22 @@ function ticket_query_order_function(x)
         url: "ticket_query_order.php", 
         data: {username: main_json[x].username},
         success: function (response_text2) {
-            swal(JSON.stringify(response_text2));
             refresh_query_order_table();
-			if(response_text2 == "no")
+			if(response_text2 == "-1")
 			{
 				main_json2 = [{"total_num": 0}];
-				$("#card_query_order").hide();
+				userman_query_order_total();
+				$("#card_query_order").slideUp(500);
 			}
 			else
 			{
-				$("#card_userman_query_order_total").show();
-				$("#card_query_order").show();
 				main_json2 = response_text2;
+				userman_query_order_total();
+				userman_query_ticket_write_table(main_json2[0].total_num);
+				$("#card_userman_query_order_total").slideDown(500);
+				$("#card_query_order").slideDown(500);
 			}
-			userman_query_order_total();
-			userman_query_ticket_write_table(main_json2[0].total_num);
+			
         },
     });
 }

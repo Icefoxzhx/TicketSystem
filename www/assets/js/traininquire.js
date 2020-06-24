@@ -3,7 +3,6 @@ var t_length = 0;
 $(function(){
 	$("#traininquire").ajaxForm(function(response_text)
 	{
-		alert(response_text);
 		refresh_main_table();
 		if(response_text == "-1")
 		{

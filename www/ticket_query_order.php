@@ -15,22 +15,26 @@ else
     socket_write($socket, strlen($commandd).$commandd);
     $tmp_res = socket_read($socket, 2048);
     $res = substr($tmp_res, 4, substr($tmp_res, 0, 4));
-    $array1 = explode("\n", $res); 
-    for($i = 0; $i <= count($array1); $i++)
-        $array2[$i] = explode(" ", $array1[$i]);
-    $array3[0]['total_num'] = $array2[0][0];
-    for($i = 1; $i <= count($array1)-1; $i++)
+    if($res == "-1")
+        echo "-1";
+    else
     {
-        $array3[$i]['order_status'] = $array2[$i][0];
-        $array3[$i]['trainid'] = $array2[$i][1];
-        $array3[$i]['start_station'] = $array2[$i][2];
-        $array3[$i]['start_station_time'] = $array2[$i][3].'<br/>'.$array2[$i][4];
-        $array3[$i]['end_station'] = $array2[$i][6];
-        $array3[$i]['end_station_time'] = $array2[$i][7].'<br/>'.$array2[$i][8];
-        $array3[$i]['price'] = $array2[$i][9];
-        $array3[$i]['order_number'] = $array2[$i][10];
+        $array1 = explode("\n", $res); 
+        for($i = 0; $i <= count($array1); $i++)
+            $array2[$i] = explode(" ", $array1[$i]);
+        $array3[0]['total_num'] = $array2[0][0];
+        for($i = 1; $i <= count($array1)-1; $i++)
+        {
+            $array3[$i]['order_status'] = $array2[$i][0];
+            $array3[$i]['trainid'] = $array2[$i][1];
+            $array3[$i]['start_station'] = $array2[$i][2];
+            $array3[$i]['start_station_time'] = $array2[$i][3].'<br/>'.$array2[$i][4];
+            $array3[$i]['end_station'] = $array2[$i][6];
+            $array3[$i]['end_station_time'] = $array2[$i][7].'<br/>'.$array2[$i][8];
+            $array3[$i]['price'] = $array2[$i][9];
+            $array3[$i]['order_number'] = $array2[$i][10];
+        }
+        echo json_encode($array3);
     }
-    echo json_encode($array3);
 }
-
 ?>

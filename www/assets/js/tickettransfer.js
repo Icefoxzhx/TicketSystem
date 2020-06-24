@@ -33,9 +33,26 @@ $(function(){
 function tickettransfer_show_total()
 {
 	$("#tickettransfer_total").slideDown(500);
-	document.getElementById('tickettransfer_total').innerHTML = "为您查询到最优车票：          (点击...查看车次详情)";
+	document.getElementById('tickettransfer_total').innerHTML = "为您查询到最优车票：       (点击...查看车次详情)";
 }
 $(function(){
 	$("#card_transfer").hide();
 	$("#tickettransfer_total").hide();
+});
+
+
+$(function(){
+    var url = window.location.href; 
+    url = url.substr(url.indexOf("?")+1);
+    var result = {},
+        queryString = url || location.search.substring(1),
+        re = /([^&=]+)=([^&]*)/g,
+        m; 
+   	while (m = re.exec(queryString))
+        result[decodeURIComponent(m[1])] = decodeURIComponent(m[2]); 
+    $("#tickettransfer_date").val(result["index_start_date"]);
+    $("#tickettransfer_start_station").val(result["index_start_station"]);
+    $("#tickettransfer_end_station").val(result["index_end_station"]);
+    if(result["index_start_date"] || result["index_start_station"] || result["index_end_station"])
+    	$("#tickettransfer_button").click();
 });

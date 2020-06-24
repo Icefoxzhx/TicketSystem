@@ -75,14 +75,14 @@
                         <div class="col-lg-12">
                             <form class="form-inline" id="tickettransfer" name="tickettransfer" action="tickettransfer.php" method="post">
                                 <div class="input-group input-group-rounded">
-                                    	<input type="text" class="form-control input-flat" placeholder="始发时期（如“08-17”）" name="tickettransfer_date" required="required">
-                                    	<input type="text" class="form-control input-flat" placeholder="出发站" name="tickettransfer_start_station" required="required">
-                                    	<input type="text" class="form-control input-flat" placeholder="抵达站" name="tickettransfer_end_station" required="required">
+                                    	<input type="text" class="form-control input-flat" placeholder="始发时期（如“08-17”）" name="tickettransfer_date" id="tickettransfer_date" required="required">
+                                    	<input type="text" class="form-control input-flat" placeholder="出发站" name="tickettransfer_start_station" id="tickettransfer_start_station" required="required">
+                                    	<input type="text" class="form-control input-flat" placeholder="抵达站" name="tickettransfer_end_station" id="tickettransfer_end_station" required="required">
                                     	<select name="sort">
 											<option value="time">按照车次所需时间从小到大排序</option>
 											<option value="cost">按照车次票价从低到高排序</option>
 										</select>
-                                    <input class="btn btn-primary btn-group-right" type="submit" value="开始查询">
+                                    <input class="btn btn-primary btn-group-right" type="submit" id="tickettransfer_button" value="开始查询">
                                 </div>
                             </form>
                             <div id="tickettransfer_total" class="alert alert-light"></div>

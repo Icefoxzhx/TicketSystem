@@ -3,7 +3,6 @@ var t_length = 0;
 $(function(){
 	$("#ticketinquire").ajaxForm(function(response_text)
 	{
-		alert(response_text);
 		if(response_text == "-1")
 		{
 			swal("Error!","未找到对应信息","error");
@@ -91,4 +90,20 @@ function ticketinquire_write_table(m)
 $(function(){
 	$("#card_inquire").hide();
 	$("#ticketinquire_total").hide();
+});
+
+$(function(){
+    var url = window.location.href; 
+    url = url.substr(url.indexOf("?")+1);
+    var result = {},
+        queryString = url || location.search.substring(1),
+        re = /([^&=]+)=([^&]*)/g,
+        m; 
+   	while (m = re.exec(queryString))
+        result[decodeURIComponent(m[1])] = decodeURIComponent(m[2]); 
+    $("#ticketinquire_date").val(result["index_start_date"]);
+    $("#ticketinquire_start_station").val(result["index_start_station"]);
+    $("#ticketinquire_end_station").val(result["index_end_station"]);
+    if(result["index_start_date"] || result["index_start_station"] || result["index_end_station"])
+    	$("#ticketinquire_button").click();
 });

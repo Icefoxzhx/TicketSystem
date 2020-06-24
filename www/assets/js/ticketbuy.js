@@ -1,7 +1,6 @@
 $(function(){
 	$("#ticketbuy").ajaxForm(function(response_text)
 	{
-		alert(response_text);
 		if(response_text == "queue")
 			swal("Success","您位于候补购票队列中！","success");
 		else if(response_text == -1)
