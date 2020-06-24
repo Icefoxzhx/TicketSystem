@@ -4,36 +4,51 @@ $(function(){
 	$("#ticketinquire").ajaxForm(function(response_text)
 	{
 		alert(response_text);
-		refresh_main_table();
 		if(response_text == "-1")
 		{
 			swal("Error!","未找到对应信息","error");
+			$("#card_inquire").slideUp(500);
+			refresh_main_table();
 			main_json = [];
-			$("#card_inquire").slideUp(2000);
+			t_length = 0;
 			ticketinquire_show_total();
+			$("#ticketinquire_show_total").slideDown(500);
 		}
 		else
 		{
-			$("#card_inquire").slideDown(2000);
 			raw_json = response_text;
 			main_json = JSON.parse(raw_json);
-			ticketinquire_show_total();
-			ticketinquire_write_table(main_json[0].total_num);
-			$("#card_inquire").slideDown(2000);
-			$("#ticketinquire_show_total").slideDown(2000);
+			if(main_json[0].total_num == 0)
+			{
+				swal("Error!","未找到对应信息","error");
+				$("#card_inquire").slideUp(500);
+				refresh_main_table();
+				main_json = [];
+				t_length = 0;
+				ticketinquire_show_total();
+				$("#ticketinquire_show_total").slideDown(500);
+			}
+			else
+			{
+				t_length = main_json[0].total_num;
+				refresh_main_table();
+				ticketinquire_show_total();
+				ticketinquire_write_table(main_json[0].total_num);
+				$("#ticketinquire_show_total").slideDown(500);
+				$("#card_inquire").slideDown(500);
+			}
 		}
 	 });
 });
 function refresh_main_table()
 {
-	for(var i = 1; i <= t_length; i++)
-		tab.removeChild(tr[i]);
+	$("tr:not(:first)").remove();
 }
 
 function ticketinquire_show_total()
 {
 	$("#ticketinquire_total").show();
-	document.getElementById('ticketinquire_total').innerHTML = "共查询到<b>" + main_json[0].total_num + "</b>张车票";
+	document.getElementById('ticketinquire_total').innerHTML = "共查询到<b>" + t_length + "</b>张车票";
 }
 
 

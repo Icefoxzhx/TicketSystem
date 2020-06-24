@@ -5,32 +5,37 @@ $(function(){
 	{
 		alert(response_text);
 		refresh_main_table();
-		if(response_text == "no")
+		if(response_text == "-1")
 		{
 			swal("Error!","未找到对应信息","error");
+			$("#card_inquire").slideUp(500);
+			$("#traininquire_total").slideUp(500);
+			$("#traininquire_operation").slideUp(500);
+			refresh_main_table();
 			main_json = [];
+			t_length = 0;
 		}
 		else
 		{
-			$("#card_inquire").show();
 			raw_json = response_text;
 			main_json = JSON.parse(raw_json);
 			t_length = main_json.length - 1;
+			traininquire_show_total();
+			traininquire_write_table(t_length);
+			$("#traininquire_total").slideDown(500);
+			$("#traininquire_operation").slideDown(500);
+			$("#card_inquire").slideDown(500);
 		}
-		traininquire_show_total();
-		traininquire_write_table(t_length);
 	 });
 });
 function refresh_main_table()
 {
-	for(var i = 1; i <= t_length; i++)
-		tab.removeChild(tr[i]);
+	$("tr:not(:first)").remove();
 }
 
 function traininquire_show_total()
 {
-	$("#traininquire_total").show();
-	document.getElementById('traininquire_total').innerHTML = main_json[0].trainid + " (" + main_json[0].type + ")";
+	document.getElementById('traininquire_total').innerHTML = "为您查询到：" + main_json[0].trainid + " (" + main_json[0].type + ")";
 }
 
 
@@ -72,4 +77,42 @@ function traininquire_write_table(m)
 $(function(){
 	$("#card_inquire").hide();
 	$("#traininquire_total").hide();
+	$("#traininquire_operation").hide();
+});
+
+$(function(){
+	$("#train_release").click(function(){
+		$.ajax({
+	        type: "POST",
+	        dataType: "text",
+	        url: "trainrelease.php", 
+	        data: {
+	        	trainrelease_id: main_json[0].trainid
+	        },
+	        success: function (release_response_text) {
+				if(release_response_text == "-1")
+					swal("Oops", "发布车次失败，可能已经发布过！", "error");
+				else if(release_response_text == "0")
+					swal("Success", "发布车次成功！", "success");
+	        },
+	    });
+	});
+});
+$(function(){
+	$("#train_delete").click(function(){
+		$.ajax({
+	        type: "POST",
+	        dataType: "text",
+	        url: "traindelete.php", 
+	        data: {
+	        	traindelete_id: main_json[0].trainid
+	        },
+	        success: function (delete_response_text) {
+				if(delete_response_text == "-1")
+					swal("Oops", "删除车次失败，可能已经删除！", "error");
+				else if(delete_response_text == "0")
+					swal("Success", "删除车次成功！", "success");
+	        },
+	    });
+	});
 });

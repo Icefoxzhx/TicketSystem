@@ -10,9 +10,7 @@ sidebarele[0].innerHTML = '\
         	<li><a class="sidebar-sub-toggle"><i class="ti-bar-chart-alt"></i> 车次操作 <span class="sidebar-collapse-icon ti-angle-down"></span></a>\
         	<ul>\
         		<li><a href="trainadd.html"> 添加车次 </a></li>\
-                <li><a href="traininquire.html"> 查询车次 </a></li>\
-                <li><a href="trainrelease.html"> 发布车次 </a></li>\
-                <li><a href="traindelete.html"> 删除车次 </a></li>\
+                <li><a href="traininquire.html"> 查询与管理车次 </a></li>\
         	</ul>\
         </li>\
         <li><a class="sidebar-sub-toggle"><i class="ti-calendar"></i> 车票操作 <span class="sidebar-collapse-icon ti-angle-down"></span></a>\
@@ -30,6 +28,5 @@ sidebarele[0].innerHTML = '\
         	</ul>\
         </li>\
         <li><a href="logout.php"><i class="ti-power-off"></i> 注销 </a></li>\
-        <li><a href="clean.php"><i class="ti-close"></i> 一键删库 </a></li>\
     </div>\
 </div>';

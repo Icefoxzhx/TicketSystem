@@ -84,3 +84,26 @@ window.alert = function(str)
 var iScript2 = document.createElement("script");
 iScript2.src="assets/js/user-avatar.js";
 document.getElementsByTagName("head")[0].appendChild(iScript2);
+
+// $(function(){
+//     var yijuele = document.getElementsByClassName('yiju');
+//     for(var i = 0; i < yijuele.length; i++)
+//     {
+//         // var xmlhttp = new XMLHttpRequest();
+//         // xmlhttp.onreadystatechange=function()
+//         // {
+//         //     if (xmlhttp.readyState == 4 && xmlhttp.status == 200)
+//         //         yijuele[i].innerHTML = xmlhttp.responseText;
+//         // }
+//         // xmlhttp.open("GET","http://yijuzhan.com/api/word.php",false);
+//         // xmlhttp.send();
+//         $.ajax({
+//             type : "GET",
+//             async : false,
+//             url : "http://yijuzhan.com/api/word.php",
+//             success : function(data) {
+//                 yijuele[i].innerHTML = data;
+//             }
+//         });
+//     }
+// });

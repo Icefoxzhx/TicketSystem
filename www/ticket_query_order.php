@@ -13,12 +13,13 @@ else
     $socket = socket_create(AF_INET,SOCK_STREAM,SOL_TCP);
     socket_connect($socket,'123.57.252.230',8888);
     socket_write($socket, strlen($commandd).$commandd);
-    $res = socket_read($socket, 2048);
+    $tmp_res = socket_read($socket, 2048);
+    $res = substr($tmp_res, 4, substr($tmp_res, 0, 4));
     $array1 = explode("\n", $res); 
     for($i = 0; $i <= count($array1); $i++)
         $array2[$i] = explode(" ", $array1[$i]);
     $array3[0]['total_num'] = $array2[0][0];
-    for($i = 1; $i <= count($array1)-2; $i++)
+    for($i = 1; $i <= count($array1)-1; $i++)
     {
         $array3[$i]['order_status'] = $array2[$i][0];
         $array3[$i]['trainid'] = $array2[$i][1];

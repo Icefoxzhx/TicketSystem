@@ -18,7 +18,7 @@ else
     socket_write($socket, strlen($commandd).$commandd);
     $tmp_res = socket_read($socket, 2048);
     $res = substr($tmp_res, 4, substr($tmp_res, 0, 4));
-    if($res == 0)
+    if($res == "0")
         echo "0";
     else
     {
@@ -29,9 +29,9 @@ else
         {
             $array3[$i]['trainid'] = $array2[$i][0];
             $array3[$i]['start_station'] = $array2[$i][1];
-            $array3[$i]['start_station_time'] = $array2[$i][2].'<br/>'.$array2[$i][3];
+            $array3[$i]['start_station_time'] = $array2[$i][2].' '.$array2[$i][3];
             $array3[$i]['end_station'] = $array2[$i][5];
-            $array3[$i]['end_station_time'] = $array2[$i][6].'<br/>'.$array2[$i][7];
+            $array3[$i]['end_station_time'] = $array2[$i][6].' '.$array2[$i][7];
             $array3[$i]['price'] = $array2[$i][8];
             $array3[$i]['seat'] = $array2[$i][9];
         }

@@ -57,7 +57,7 @@ function refresh_main_table()
 function refresh_query_order_table()
 {
 	for(var i = 1; i <= main_json2[0].total_num; i++)
-		tab.removeChild(tr[i]);
+		tab2.removeChild(tr[i]);
 }
 
 

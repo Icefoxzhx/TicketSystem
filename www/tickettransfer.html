@@ -36,33 +36,7 @@
                             <span class="line"></span>
                         </div>
                     </div>
-                    <div class="float-right">
-                        <div class="dropdown dib">
-                            <div class="header-icon" data-toggle="dropdown">
-                            <span class="user-avatar" id="user-avatar">欢迎您
-                                    <i class="ti-angle-down f-s-10"></i>
-                                </span>
-                                <div class="drop-down dropdown-profile dropdown-menu dropdown-menu-right">
-                                    <div class="dropdown-content-body">
-                                        <ul>
-                                            <li>
-                                                <a href="app-profilehtml">
-                                                    <i class="ti-user"></i>
-                                                    <span>个人资料</span>
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a href="logout.php">
-                                                    <i class="ti-power-off"></i>
-                                                    <span>注销</span>
-                                                </a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <div class="float-right" id="float-right"></div>
                 </div>
             </div>
         </div>
@@ -112,7 +86,74 @@
                                 </div>
                             </form>
                             <div id="tickettransfer_total" class="alert alert-light"></div>
-                            <div class="card" id="card_transfer">
+                            <div class="card col-lg-6" id="card_transfer">
+                                <div class="card-body">
+                                    <ul class="timeline">
+                                        <li>
+                                            <div class="timeline-badge success">始</div>
+                                            <div class="timeline-panel">
+                                                <div class="timeline-heading">
+                                                    <h5 class="timeline-title">始发站</h5>
+                                                </div>
+                                                <div class="timeline-body">
+                                                    <h5 id="transfer_start_station">始发站</h5>
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="timeline-badge warning">...</div>
+                                            <div class="timeline-panel" style="border: 0">
+                                                <div class="timeline-heading">
+                                                    <h5 class="timeline-title" id="transfer_trainid1" style="font-size: 16px">id1</h5>
+                                                </div>
+                                                <div class="timeline-body ">
+                                                    <p><b id="transfer_start_station_time1"></b>出发</p>
+                                                    <p><b id="transfer_end_station_time1"></b>抵达</p>
+                                                    <p>剩余<b id="transfer_seat1"></b>张票</p>
+                                                    <p>票价<b id="transfer_price1"></b>元</p>
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="timeline-badge success">中</div>
+                                            <div class="timeline-panel">
+                                                <div class="timeline-heading">
+                                                    <h5 class="timeline-title">中转站</h5>
+                                                </div>
+                                                <div class="timeline-body">
+                                                    <h5 id="transfer_mid_station">中转站</h5>
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="timeline-badge warning">...</div>
+                                            <div class="timeline-panel" style="border: 0">
+                                                <div class="timeline-heading">
+                                                    <h5 class="timeline-title" id="transfer_trainid2" style="font-size: 16px">id2</h5>
+                                                </div>
+                                                <div class="timeline-body">
+                                                    <p><b id="transfer_start_station_time2"></b>出发</p>
+                                                    <p><b id="transfer_end_station_time2"></b>抵达</p>
+                                                    <p>剩余<b id="transfer_seat2"></b>张票</p>
+                                                    <p>票价<b id="transfer_price2"></b>元</p>
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="timeline-badge success">末</div>
+                                            <div class="timeline-panel">
+                                                <div class="timeline-heading">
+                                                    <h5 class="timeline-title">终点站</h5>
+                                                </div>
+                                                <div class="timeline-body">
+                                                    <h5 id="transfer_end_station">终点站</h5>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+      <!--                      <div class="card" id="card_transfer">
                                 <div class="bootstrap-data-table-panel">
                                     <div class="table-responsive">
                                         <table class="table table-striped table-bordered table-hover" id="tickettransfer_main_table">
@@ -131,7 +172,7 @@
                                         </table>
                                     </div>
                                 </div>
-                            </div>
+                            </div> -->
                         </div>
                         <!-- /# column -->
                     </div>

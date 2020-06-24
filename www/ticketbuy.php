@@ -24,5 +24,5 @@ $res = substr($tmp_res, 4, substr($tmp_res, 0, 4));
 // $row[0]['mailAddr'] = $array[2];
 // $row[0]['privilege'] = $array[3];
 // echo json_encode($row);
-echo var_dump($res);
+echo $res;
 ?>

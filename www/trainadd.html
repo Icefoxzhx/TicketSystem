@@ -34,33 +34,7 @@
                             <span class="line"></span>
                         </div>
                     </div>
-                    <div class="float-right">
-                        <div class="dropdown dib">
-                            <div class="header-icon" data-toggle="dropdown">
-                            <span class="user-avatar" id="user-avatar">欢迎您
-                                    <i class="ti-angle-down f-s-10"></i>
-                                </span>
-                                <div class="drop-down dropdown-profile dropdown-menu dropdown-menu-right">
-                                    <div class="dropdown-content-body">
-                                        <ul>
-                                            <li>
-                                                <a href="app-profilehtml">
-                                                    <i class="ti-user"></i>
-                                                    <span>个人资料</span>
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a href="logout.php">
-                                                    <i class="ti-power-off"></i>
-                                                    <span>注销</span>
-                                                </a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <div class="float-right" id="float-right"></div>
                 </div>
             </div>
         </div>
@@ -100,7 +74,7 @@
                              <div class="card" id="card_add">
                                 <form onsubmit = "return false">
                                     <label>请输入火车编号（trainID）：（注 车次的唯一标识符，由字母开头，字母、数字和下划线组成的字符串，长度不超过20。）</label>
-                                    <input class="form-control input-default" type="text" name="add_trainid" id="add_trainid" required="required">
+                                    <input class="form-control input-default" type="text" name="add_trainid" id="add_trainid" required="required" onkeyup="this.value=this.value.replace(/\s+/g,'')">
                                     <label>请输入该车次的座位数量（100000以内的正整数）：</label>
                                     <input class="form-control input-default" type="number" name="add_seatnum" id="add_seatnum" min="1" max="100000" required="required">
                                     <label>请输入车次经过的车站数量（2-100的整数）：</label>
@@ -109,11 +83,11 @@
                                         <input class="form-control input-default" type="text" name="add_stations" id="add_stations" required="required">
                                         <label>请依次输入车次在各个车站之间的阶梯价格，用|隔开（例：115|514）：</label>
                                         <input class="form-control input-default" type="text" name="add_prices" id="add_prices" required="required">   !-->
-                                    <label>请输入车次的售卖日期区间（mm-dd，例： 06-17 起 08-29 止）：</label>
+                                    <label>请选择或输入车次的售卖日期区间（mm-dd，例： 06-17 起 08-29 止）：</label>
                                     <div class="input-group">
-                                        <input class="form-control input-default" type="text" name="add_saledate_from" id="add_saledate_from" required="required">
+                                        <input class="form-control input-default" type="date" min="2020-06-01" max="2020-08-31" name="add_saledate_from" id="add_saledate_from" required="required">
                                         <span class="input-group-text">起</span>
-                                        <input class="form-control input-default" type="text" name="add_saledate_to" id="add_saledate_to" required="required">
+                                        <input class="form-control input-default" type="date" min="2020-06-01" max="2020-08-31" name="add_saledate_to" id="add_saledate_to" required="required">
                                         <span class="input-group-text">止</span>
                                     </div>
                                     <label>请输入发车时间（例：19时19分）：</label> 
@@ -127,7 +101,7 @@
                                         <input class="form-control input-default" type="text" name="add_traveltimes" id="add_traveltimes" required="required"> !-->
                             <!--        <input class="form-control input-default" type="text" name="add_saledate" id="add_saledate" required="required">   -->
                                     <label>请输入车次类型：</label>
-                                    <input class="form-control input-default" type="text" name="add_type" id="add_type" required="required">
+                                    <input class="form-control input-default" type="text" name="add_type" id="add_type" required="required" onkeyup="this.value=this.value.replace(/\s+/g,'')">
                                     <div class="btn-group">
                                         <button type="submit" class="btn btn-default" id="trainadd_button">确认添加</button>
                                         <button type="reset" class="btn btn-default" onclick="$('div input').val('');">清空</button>

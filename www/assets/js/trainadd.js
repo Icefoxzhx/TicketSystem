@@ -8,18 +8,18 @@ function append_on_timeline(m)
             <div class="timeline-panel">\
                 <div class="timeline-heading">\
                 	<div class="input-group">\
-                		<span class="input-group-text" style="width:150px;">站名</span>\
+                		<span class="input-group-text" style="width:130px;">站名</span>\
                     	<input class="form-control input-default add_stations" type="text" name="add_stations_'+m+'" id="add_stations_'+m+'" required="required">\
                 	</div>';
     if(m != 1)
     {
     	timeline_node_content += '\
     				<div class="input-group">\
-                		<span class="input-group-text" style="width:150px; font-size:14px">上站到此站价格</span>\
+                		<span class="input-group-text" style="width:130px; font-size:14px">上站到此站价格</span>\
                     	<input class="form-control input-default add_prices" type="number" min="0" name="add_prices_'+m+'" id="add_prices_'+m+'" required="required">\
                 	</div>\
                 	<div class="input-group">\
-                		<span class="input-group-text" style="width:150px; font-size:14px">上站到此站旅程时间</span>\
+                		<span class="input-group-text" style="width:130px; font-size:14px">上站到此站历时</span>\
                     	<input class="form-control input-default add_traveltimes" type="number" min="0" name="add_traveltimes_'+m+'" id="add_traveltimes_'+m+'" required="required">\
                 		<span class="input-group-text">分钟</span>\
                 	</div>';
@@ -28,7 +28,7 @@ function append_on_timeline(m)
     {
     	timeline_node_content += '\
                 	<div class="input-group">\
-                		<span class="input-group-text" style="width:150px; font-size:14px">本站停靠时间</span>\
+                		<span class="input-group-text" style="width:130px; font-size:14px">本站停靠时间</span>\
                 		<input class="form-control input-default add_stopovertimes" type="number" name="add_stopoverTimes_'+m+'" id="add_stopoverTimes_'+m+'" min="0" max="10000" required="required">\
                 		<span class="input-group-text">分钟</span>\
                 	</div>';
@@ -113,11 +113,24 @@ $(function(){
 				return false;
 			}
 		}
+		if($("#add_saledate_from").val() < "2020-06-01")
+		{
+			swal("信息填写错误！", "日期错误！", "error");
+			$("#add_saledate_from").val("2020-06-01");
+			$("#add_saledate_from").addClass("input-focus");
+			return false;
+		}
+		if($("#add_saledate_to").val() > "2020-08-31" || $("#add_saledate_to").val() < $("#add_saledate_from").val())
+		{
+			swal("信息填写错误！", "日期错误！", "error");
+			$("#add_saledate_to").val("2020-08-31");
+			$("#add_saledate_to").addClass("input-focus");
+			return false;
+		}
 		var add_stations_array = document.getElementsByClassName('add_stations');
 		var add_prices_array = document.getElementsByClassName('add_prices');
 		var add_traveltimes_array = document.getElementsByClassName('add_traveltimes');
 		var add_stopovertimes_array = document.getElementsByClassName('add_stopovertimes');
-		alert(array_to_str(add_stopovertimes_array));
 		$.ajax({
 	        type: "POST",
 	        dataType: "text",
@@ -128,19 +141,30 @@ $(function(){
 	        	add_stationnum: $("#add_stationnum").val(),
 	        	add_stations: array_to_str(add_stations_array),
 	        	add_prices: array_to_str(add_prices_array),
-	        	add_starttime: $("#add_starttime_h").val()+":"+$("#add_starttime_m").val(),
+	        	add_starttime: $("#add_starttime_h").val() + ":" + $("#add_starttime_m").val(),
 	        	add_traveltimes: array_to_str(add_traveltimes_array),
 	        	add_stopovertimes: array_to_str(add_stopovertimes_array),
-	        	add_saledate: $("#add_saledate_from").val() + "|" + $("#add_saledate_to").val(),
+	        	add_saledate: $("#add_saledate_from").val().substring(5) + "|" + $("#add_saledate_to").val().substring(5),
 	        	add_type: $("#add_type").val(),
 
 	        },
-	        success: function (response_text_add) {
-				if(response_text_add == "-1")
+	        success: function (response_text_text) {
+				if(response_text_text == "-1")
 					swal("Oops", "添加车次失败，可能是已经填加过同名车次，请检查输入", "error");
-				else if(response_text_add == "0")
+				else if(response_text_text == "0")
 					swal("Success", "添加车次成功！", "success");
 	        },
 	    });
+	});
+});
+
+$(function(){
+	$("#add_starttime_h").change(function(){
+		if($("#add_starttime_h").val() <= 9)
+			$("#add_starttime_h").val("0" + $("#add_starttime_h").val());
+	});
+	$("#add_starttime_m").change(function(){
+		if($("#add_starttime_m").val() <= 9)
+			$("#add_starttime_m").val("0" + $("#add_starttime_m").val());
 	});
 });

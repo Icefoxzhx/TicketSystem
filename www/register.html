@@ -3,17 +3,18 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>登录 -12360火车票管理系统</title>
+<title>注册 -12360火车票管理系统</title>
 <link rel="stylesheet" type="text/css" href="assets/login_css/style.css">
+<link rel="stylesheet" type="text/css" href="assets/login_css/body.css"> 
 <!-- Favicon -->
 <link rel="shortcut icon" href="favicon.ico">
 <link rel="apple-touch-icon" sizes="144x144" href="favicon.ico">
 </head>
-<body style="background:url(assets/login_css/login.jpg); background-size:100%;">
+<body style="background:url(assets/login_css/register.jpg);background-size:100%;">
 <div class="container">
 	<section id="content">
-		<form id="login" method="post" action="login.php">
-			<h1>登录</h1>
+		<form id="register" method="post" action="register.php">
+			<h1>注册</h1>
 			<div>
 				<input type="text" placeholder="用户名" required="required" id="username" name="username" onkeyup="this.value=this.value.replace(/\s+/g,'')">
 			</div>
@@ -24,10 +25,10 @@
 				<span class="help-block u-errormessage" id="js-server-helpinfo">&nbsp;</span>
 			</div> 
 			<div>
-				<input type="submit" value="登录" />
-    			<input type="button" value="去注册" onclick="window.location.href='register.html'">
+				<input type="submit" value="注册" />
+				<input type="reset" value="重置" />
 				<!-- <input type="submit" value="Login" class="btn btn-primary" id="js-btn-login"/> -->
-				<a href="#" style="color: grey; text-decoration: none">忘记密码？</a>
+				<a href="#" style="color: grey; text-decoration: none">需要帮助？</a>
 			</div>
 		</form><!-- form -->
 	</section><!-- content -->
@@ -41,5 +42,5 @@
 <script src="assets/js/lib/jquery.min.js"></script>
 <script src="assets/js/lib/jquery.form.js"></script>
 <script src="assets/js/lib/sweetalert/sweetalert.min.js"></script>
-<script src="assets/js/login.js"></script>
+<script src="assets/js/register.js"></script>
 </html>
