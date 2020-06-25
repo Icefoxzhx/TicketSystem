@@ -56,8 +56,9 @@ function refresh_main_table()
 }
 function refresh_query_order_table()
 {
-	for(var i = 1; i <= main_json2[0].total_num; i++)
-		tab2.removeChild(tr[i]);
+	// for(var i = 1; i <= main_json2[0].total_num; i++)
+	// 	tab2.removeChild(tr[i]);
+	$(".user_order_tr").remove();
 }
 
 
@@ -84,6 +85,7 @@ function userman_write_table(m)
 	for(var i = 1; i <= m; i++)
 	{
 		tr[i] = document.createElement("tr");
+		tr[i].classList.add('user_table_tr');
 		num = document.createElement("td");
 		num.innerHTML = i;
 		usernamee = document.createElement("td");
@@ -120,6 +122,7 @@ function userman_query_ticket_write_table(m)
 	for(var i = 1; i <= m; i++)
 	{
 		tr2[i] = document.createElement("tr");
+		tr2[i].classList.add('user_order_tr');
 		num = document.createElement("td");
 		num.innerHTML = i;
 		trainid = document.createElement("td");
@@ -144,8 +147,8 @@ function userman_query_ticket_write_table(m)
 		else if(main_json2[i].order_status == "[refunded]")
 			order_status.innerHTML = "<span class='badge badge-danger'>已退票</span>";
 		refund = document.createElement("td");
-		if(i == 1)
-			refund.innerHTML = '<button class="btn btn-link" style="font-size:14px" onclick=ticket_refund(1);>退票</button>';
+		if(main_json2[i].order_status == "[pending]" || main_json2[i].order_status == "[success]")
+			refund.innerHTML = '<button class="btn btn-link" style="font-size:14px" onclick=ticket_refund('+i+');>退票</button>';
 		else
 			refund.innerHTML = '&nbsp&nbsp&nbsp&nbsp退票';
 		tab2.appendChild(tr2[i]);
@@ -221,16 +224,18 @@ function ticket_refund(x)
         type: "POST",
         dataType: "text",
         url: "ticketrefund.php", 
-        data: {username: main_json[x].username},
+        data: {
+        	username: main_json[1].username,
+        	which: x
+        },
         success: function (response_text3) {
 			if(response_text3 == "no")
 				swal("Oops", "退票失败，出现了意想不到的问题……", "error");
 			else
 			{
-				swal(response_text3);
-				$("#card_query_order").hide();
-				$("#userman_query_ticket_total").hide();
 				swal("Success", "退票成功！", "success");
+				$("#card_userman_query_order_total").slideUp(500);
+				$("#card_query_order").slideUp(500);
 			}
         },
     });
