@@ -8,9 +8,9 @@
 #include <iomanip>
 #include "parser_frontend.h"
 using namespace std;
-char real_command[1000];
-char result[1000];
-char real_result[1000];
+char real_command[100000];
+char result[100000];
+char real_result[100000];
 stringstream real_result_stream;
 int main()
 {
@@ -29,7 +29,7 @@ int main()
     int sClient;//创建客户端socket
     sockaddr_in remoteAddr;//客户端的地址信息
     socklen_t nAddrlen = sizeof(remoteAddr);
-    char revData[990];//接收数据缓冲区
+    char revData[99000];//接收数据缓冲区
     while (1)
     {
     	memset(real_command, 0, sizeof(real_command));
@@ -46,7 +46,7 @@ int main()
             printf("server attack from outside!\n");
             continue;
         }
-        int ret = recv(sClient, revData, 990, 0);
+        int ret = recv(sClient, revData, 99000, 0);
         stringstream sstr(revData);
         int cmd_length = 0;
         sstr >> cmd_length;
@@ -57,7 +57,7 @@ int main()
         strncpy(real_command, revData+ii, cmd_length);
         printf("read command: %s\n", real_command);
         get_command_frontend(real_command, result);
-        real_result_stream << setw(4) << setfill('0') << strlen(result)-1;
+        real_result_stream << setw(6) << setfill('0') << strlen(result)-1;
         real_result_stream << result;
         strcpy(real_result, real_result_stream.str().c_str());
         printf("real_result:%s----\n", real_result);
